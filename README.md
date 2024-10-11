@@ -1,1 +1,1 @@
-# jpeg
+# JPEG Encoder / Decoder Hardware Accelerator
