@@ -1,15 +1,17 @@
 clear; close all;
 x1 = [
-     32.5 3.0 1.0 0.0 0.0 0.0;
-     17.0 5.0 2.0 0.0 0.0 0.0; 
-     4.0 3.0 1.0 0.0 0.0 0.0;
-     1.0 0.0 0.0 0.0 0.0 0.0;
-     0.0 0.0 0.0 0.0 0.0 0.0;
-     0.0 0.0 0.0 0.0 0.0 0.0;
-     ];
+488	-1	-1	0	0	0	0	0;
+14	1	0	0	0	0	0	0;
+-7	0	0	0	0	0	0	0;
+2	-1	0	0	0	0	0	0;
+0	0	0	0	0	0	0	0;
+-1	0	0	0	0	0	0	0;
+0	0	0	0	0	0	0	0;
+0	0	0	0	0	0	0	0;
+];
 
 x2 = magic(8);
-x = x2;
+x = x1;
 
 flip = false;
 count = 1;
@@ -69,8 +71,82 @@ for i=1:2*N-1
     end
 end
 
+% AC RLE / Kinda Huffman 
+ac = out(2:end);
+rl = 1;
+
+count = 1;
+
+for i=1:length(ac)
+    if (ac(i) ~= 0) || (rl == 16)
+        ac_rle(count).r = rl-1;
+        if (ac(i) ~= 0) 
+            ac_rle(count).s = floor(log(abs(ac(i)))/log(2)) + 1;
+        elseif (rl == 16) 
+            ac_rle(count).s = 0;
+        end
+        ac_rle(count).v = ac(i);
+        rl = 0;
+        count = count + 1;
+    end
+    rl = rl + 1;
+end
+if (rl > 1) 
+    ac_rle(count).r = rl-2; 
+    ac_rle(count).s = 0;
+    ac_rle(count).v = 0;
+end
+
+% Differnetial Puse Code Modulation (DPCM)
+% dc coeffs of image blocks (entire image is 64x64)
+dc = [ 488, -30, -20, -10, 10, 20, 30, 40 ];
+
+pred = 0;
+dpcm = zeros(1, length(dc));
+for i=1:length(dc)
+   dcpm(i) = dc(i) - pred; 
+   pred = dc(i);
+end
+
+% DC Kinda Huffman
+
+for i=1:length(dcpm)
+    if dcpm(i) == 0
+        dc_huff(i).s = 0;
+        dc_huff(i).v = 0;
+    else 
+        dc_huff(i).s = floor(log(abs(dcpm(i)))/log(2)) + 1;
+        dc_huff(i).v = dcpm(i);
+    end
+end
+
+
+% DC Decode (trivial since size doesn't really matter...)
+
+x_dec_zz(1) = dc_huff(1).v
+
+% AC Decode
+
+count = 2;
+for i=1:length(ac_rle)
+    for j=1:ac_rle(i).r
+        x_dec_zz(count) = 0;
+        count = count + 1;
+    end
+    x_dec_zz(count) = ac_rle(i).v;
+    count = count + 1;
+end
+
+% UnZigZag
+
+x_dec = zeros(length(x))
+for i = 1:length(r_lut)
+    x_dec(r_lut(i), c_lut(i)) = x_dec_zz(i);
+end
 
 disp(x);
 disp(out);
 disp(r_lut);
 disp(c_lut);
+disp(ac_rle);
+disp(x_dec == x);
