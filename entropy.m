@@ -97,6 +97,22 @@ if (rl > 1)
     ac_rle(count).v = 0;
 end
 
+% Add EOB
+
+ind = 1;
+for i=1:length(ac_rle)
+    if ac_rle(i).v ~= 0
+        ind = i+1;
+    end
+end
+
+if ind <= length(ac_rle)
+    ac_rle(ind:end) = [];
+    ac_rle(ind).r = 0;
+    ac_rle(ind).s = 0;
+    ac_rle(ind).v = 0;
+end
+
 % Differnetial Puse Code Modulation (DPCM)
 % dc coeffs of image blocks (entire image is 64x64)
 dc = [ 488, -30, -20, -10, 10, 20, 30, 40 ];
@@ -123,23 +139,27 @@ end
 
 % DC Decode (trivial since size doesn't really matter...)
 
-x_dec_zz(1) = dc_huff(1).v
+x_dec_zz(1) = dc_huff(1).v;
 
 % AC Decode
 
 count = 2;
 for i=1:length(ac_rle)
-    for j=1:ac_rle(i).r
-        x_dec_zz(count) = 0;
+    if (ac_rle(i).s == 0) 
+        x_dec_zz(count:length(out)) = 0;
+    else
+        for j=1:ac_rle(i).r
+            x_dec_zz(count) = 0;
+            count = count + 1;
+        end
+        x_dec_zz(count) = ac_rle(i).v;
         count = count + 1;
     end
-    x_dec_zz(count) = ac_rle(i).v;
-    count = count + 1;
 end
 
 % UnZigZag
 
-x_dec = zeros(length(x))
+x_dec = zeros(length(x));
 for i = 1:length(r_lut)
     x_dec(r_lut(i), c_lut(i)) = x_dec_zz(i);
 end
