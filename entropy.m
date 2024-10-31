@@ -164,9 +164,20 @@ for i = 1:length(r_lut)
     x_dec(r_lut(i), c_lut(i)) = x_dec_zz(i);
 end
 
-disp(x);
-disp(out);
-disp(r_lut);
-disp(c_lut);
-disp(ac_rle);
-disp(x_dec == x);
+disp("Row LUT");
+for i=1:length(r_lut)
+    fprintf("4'd%d, ", r_lut(i)-1);
+end
+
+disp(" ");
+disp("Col LUT");
+for i=1:length(c_lut)
+    fprintf("4'd%d, ", c_lut(i)-1);
+end
+
+% disp(x);
+% disp(out);
+% disp(r_lut);
+% disp(c_lut);
+% disp(ac_rle);
+% disp(x_dec == x);
