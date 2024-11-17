@@ -10,14 +10,27 @@ def readByte(fileBytes, scanPosition):
     byte, = struct.unpack(">B", fileBytes[scanPosition:scanPosition+1])
     return (scanPosition+1, byte)
 
+def splitByte(byteInt):
+    b_str = f'{byteInt:08b}'
+    upper = b_str[0:4]
+    lower = b_str[4:8]
+    return (int(upper),int(lower))
+
+def printMatrix8(matrix):
+    for row in range(8):
+        for col in range(8):
+            print("%02d, " %(matrix[col+row*8]), end="")
+        print()
 #Read file
 fileBytes = open(imgName, "rb").read()
+print("Reading image: "+imgName)
 #Setup arrays to hold extracted data
 sp = 0 #Scan Position
 appHeader = []
-appUnitOptions = ["","DPI",""]
+appUnitOptions = ["No Units/Pixel Aspect Ratio","Pixels Per Inch","Pixels per cm"]
 quantTables = []
-huffTables = []
+huffSizeTables = [[],[]] #Size of Code Tables. [DC Tables(up to 4), AC Tables(up to 4)] 
+huffValTables = [[],[]] #Value of Codes Tables. [DC Tables(up to 4), AC Tables(up to 4)]
 bitStream = []
 
 #Check for valid Start of Image Marker
@@ -46,18 +59,30 @@ while(True):
                         appText = appText + chr(b)
                 else:
                     appHeader.append(b)
-            print(appText + " Version: "+str(appHeader[0])+"."+str(appHeader[1]))
-            print("Unit: " + appUnitOptions[appHeader[2]])
-
+            if(appText == "JFIF"):
+                print("  "+appText + " Version: "+str(appHeader[0])+"."+str(appHeader[1]))
+                print("  Unit: " + appUnitOptions[appHeader[2]])
+                print("  Horizontal Pixel Density: "+str(appHeader[3]*256+appHeader[4])+". Vertical Pixel Density: "+str(appHeader[5]*256+appHeader[6]))
+                print("  Thumbnail X: "+str(appHeader[7])+", Thumbnail Y: "+str(appHeader[8]))
+            else:
+                print("Unsupported Extension: "+appText)
         elif (marker == 0xE1):
             print("App1 Header - EXIF")
             quit()
         elif (marker == 0xDB):
             print("Quantization Table")
             (sp,length) = readWord(fileBytes, sp)
+            destination = "empty"
             for i in range(length-2):
                 (sp,b)=readByte(fileBytes, sp)
-                print(hex(b))
+                if(destination == "empty"):
+                    destination = b
+                    while(len(quantTables) < destination+1):
+                        quantTables.append([])
+                else:
+                    quantTables[destination].append(b)
+            print("  Destination: "+str(destination))
+            printMatrix8(quantTables[destination])
         elif (marker == 0xC0):
             print("Start of Frame0 - Baseline DCT-Based JPEG")
             (sp,length) = readWord(fileBytes, sp)
@@ -70,15 +95,28 @@ while(True):
         elif (marker == 0xC4):
             print("Huffman Table")
             (sp,length) = readWord(fileBytes, sp)
-            for i in range(length-2):
+            (sp,classDest) = readByte(fileBytes, sp)
+            (clss,destination) = splitByte(classDest)
+            print("  Class: "+str(clss)+", Destination: "+str(destination))
+            while(len(huffSizeTables[clss]) < destination+1):
+                huffSizeTables[clss].append([])
+                huffValTables[clss].append([])
+            for i in range(16):
                 (sp,b)=readByte(fileBytes, sp)
-                print(hex(b))
+                huffSizeTables[clss][destination].append(b)
+            for i in range(length-2-1-16):
+                (sp,b)=readByte(fileBytes, sp)
+                huffValTables[clss][destination].append(b)
+            print("  Number of codes with bit-lengths 1-16: "+str(huffSizeTables[clss][destination]))
+            print("  Code equivalent values: "+str(huffValTables[clss][destination]))
         elif (marker == 0xFE):
             print("Comment")
+            comment="  "
             (sp,length) = readWord(fileBytes, sp)
             for i in range(length-2):
                 (sp,b)=readByte(fileBytes, sp)
-                print(hex(b))
+                comment = comment+chr(b)
+            print(comment)
         elif (marker == 0xDA):
             print("Start of Scan")
             (sp,length) = readWord(fileBytes, sp)
