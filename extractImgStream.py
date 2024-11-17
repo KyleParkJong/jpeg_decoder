@@ -59,13 +59,24 @@ while(True):
                 (sp,b)=readByte(fileBytes, sp)
                 print(hex(b))
         elif (marker == 0xC0):
-            print("Start of Frame0 - Baseline DCT-Based JPEG")
+            print("Start of Frame - Baseline DCT-Based JPEG")
             (sp,length) = readWord(fileBytes, sp)
-            for i in range(length-2):
+            (sp,prec) = readByte(fileBytes, sp)
+            print("Precision: " + str(prec) + " bits")
+            (sp,Y) = readWord(fileBytes, sp)
+            (sp,X) = readWord(fileBytes, sp)
+            print("Resolution: " + str(Y) + " x " + str(X) + " bits")
+            (sp,num_c) = readByte(fileBytes, sp)
+            for i in range(num_c):
+                (sp,c)=readByte(fileBytes, sp)
+                print("Channel: " + str(c))
                 (sp,b)=readByte(fileBytes, sp)
-                print(hex(b))
+                print("Horizontal Sampling Factor: " + str(b & 0b1111))
+                print("Vertical Sampling Factor: " + str(b >> 4))
+                (sp,b)=readByte(fileBytes, sp)
+                print("Quantization Table Index: " + str(b))
         elif (marker == 0xC2):
-            print("Start of Frame2 - Progressive DCT-Based JPEG")
+            print("Start of Frame - Progressive DCT-Based JPEG")
             exit()
         elif (marker == 0xC4):
             print("Huffman Table")
@@ -82,9 +93,20 @@ while(True):
         elif (marker == 0xDA):
             print("Start of Scan")
             (sp,length) = readWord(fileBytes, sp)
-            for i in range(length-2):
-                (sp,b)=readByte(fileBytes, sp)
-                print(hex(b))
+            (sp,ns) = readByte(fileBytes, sp)
+            for i in range(ns):
+                (sp,c)=readByte(fileBytes, sp)
+                (sp,t)=readByte(fileBytes, sp)
+                print("Channel: " + str(c))
+                print("DC Entropy Table Index: " + str(t & 0b1111))
+                print("AC Entropy Table Index: " + str(t >> 4))
+            (sp,b)=readByte(fileBytes, sp)
+            print("Start of selection: " + str(b))
+            (sp,b)=readByte(fileBytes, sp)
+            print("End of selection: " + str(b))
+            (sp,b)=readByte(fileBytes, sp)
+            print("Successive approx. bit position high: " + str(b & 0b1111))
+            print("Successive approx. bit position low: " + str(b >> 4))
         elif (marker == 0xD9):
             print("End of Image")
             break
