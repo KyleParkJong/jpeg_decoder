@@ -1,4 +1,5 @@
 import struct
+import huffman
 
 ######## USER - ENTER I/O FILE NAMES ###########
 imgName = "cat_august.jpg" #"charcoal_cat.jpg"#
@@ -247,52 +248,17 @@ of = open(bitStreamOutFile, "w")
 of.write(bitStream)
 of.close()
 print("Recovered bitstream output to file: "+bitStreamOutFile)
-
-
-
-##Old version: reading for markers two bytes at a time
-    # (sp,marker) = readWord(fileBytes, sp)
-    # if (marker == 0xFFE0):
-    #     print("App0 Header")
-    #     (sp,length) = readWord(fileBytes, sp)
-    #     for i in range(length-2):
-    #         (sp,b)=readByte(fileBytes, sp)
-    #         print(hex(b))
-    # elif (marker == 0xFFDB):
-    #     print("Quantization Table")
-    #     (sp,length) = readWord(fileBytes, sp)
-    #     for i in range(length-2):
-    #         (sp,b)=readByte(fileBytes, sp)
-    #         print(hex(b))
-    # elif (marker == 0xFFC2):
-    #     print("Start of Frame2 - Progressive DCT-Based JPEG")
-    #     exit()
-    # elif (marker == 0xFFC0):
-    #     print("Start of Frame0 - Baseline DCT-Based JPEG")
-    #     (sp,length) = readWord(fileBytes, sp)
-    #     for i in range(length-2):
-    #         (sp,b)=readByte(fileBytes, sp)
-    #         print(hex(b))
-    # elif (marker == 0xFFC4):
-    #     print("Huffman Table")
-    #     (sp,length) = readWord(fileBytes, sp)
-    #     for i in range(length-2):
-    #         (sp,b)=readByte(fileBytes, sp)
-    #         print(hex(b))
-    # elif (marker == 0xFFFE):
-    #     print("Comment")
-    #     (sp,length) = readWord(fileBytes, sp)
-    #     for i in range(length-2):
-    #         (sp,b)=readByte(fileBytes, sp)
-    #         print(hex(b))
-    # elif (marker == 0xFFDA):
-    #     print("Start of Scan")
-    #     (sp,length) = readWord(fileBytes, sp)
-    #     for i in range(length-2):
-    #         (sp,b)=readByte(fileBytes, sp)
-    #         print(hex(b))
-    # elif (marker == 0xFFD9):
-    #     print("End of Image")
-    #     break
-
-        
+#Write DC huffman tables to files
+for i in range(len(huffSizeTables[0])):
+    hf = huffman.HuffmanTable()
+    hf.GetHuffmanBits(huffSizeTables[0][i], huffValTables[0][i])
+    fileName = "DC_HuffTable_Index"+str(i)+".txt"
+    hf.WriteTableToFile(fileName)
+    print("Recovered Huffman Table output to file: "+fileName)
+#Write AC huffman tables to files
+for i in range(len(huffSizeTables[1])):
+    hf = huffman.HuffmanTable()
+    hf.GetHuffmanBits(huffSizeTables[1][i], huffValTables[1][i])
+    fileName = "AC_HuffTable_Index"+str(i)+".txt"
+    hf.WriteTableToFile(fileName)
+    print("Recovered Huffman Table output to file: "+fileName)
