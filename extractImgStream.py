@@ -1,7 +1,13 @@
 import struct
 
-imgName = "cat_august.jpg"#"charcoal_cat.jpg"#
+######## USER - ENTER I/O FILE NAMES ###########
+imgName = "cat_august.jpg" #"charcoal_cat.jpg"#
+bitStreamOutFile = "bitStream.txt"
+######## USER - CONFIGURE PARAMETERS ###########
+outType = "bin32" #Options: "binary" = one long string, "bin32" = lines of 32 bits, "hex" = lines of 32 hex
+################################################
 
+####### Function Definitions ###########
 def readWord(fileBytes, scanPosition):
     word, = struct.unpack(">H", fileBytes[scanPosition:scanPosition+2])
     return (scanPosition+2, word)
@@ -21,9 +27,82 @@ def printMatrix8(matrix):
         for col in range(8):
             print("%02d, " %(matrix[col+row*8]), end="")
         print()
+
+def readScan(fileBytes, scanPosition):
+    sp = scanPosition
+    bitStream = ""
+    while(True):
+        (sp,byte) = readByte(fileBytes, sp)
+        if(byte == 0xFF):
+            (sp,marker) = readByte(fileBytes, sp)
+            if(marker == 0x00):
+                #Padding detected, add FF to bitsream
+                bitStream = bitStream + '11111111'
+            elif(marker == 0xD9):
+                #End of file detected
+                break
+            else:
+                print("Error - 0xFF Not followed by stuffing or EOF")
+        else:
+            bitStream = bitStream + f'{byte:08b}'    
+    return (sp-2, bitStream)
+
+def readScan32(fileBytes, scanPosition):
+    sp = scanPosition
+    bitStream = ""
+    bitsAdded = 0
+    while(True):
+        (sp,byte) = readByte(fileBytes, sp)
+        if(byte == 0xFF):
+            (sp,marker) = readByte(fileBytes, sp)
+            if(marker == 0x00):
+                #Padding detected, add FF to bitsream
+                bitStream = bitStream + '11111111'
+                bitsAdded = bitsAdded + 8
+            elif(marker == 0xD9):
+                #End of file detected
+                break
+            else:
+                print("Error - 0xFF Not followed by stuffing or EOF")
+        else:
+            bitStream = bitStream + f'{byte:08b}'
+            bitsAdded = bitsAdded + 8
+        if(bitsAdded >= 32):
+            bitStream = bitStream + '\n'
+            bitsAdded = 0 
+    return (sp-2, bitStream)
+
+def readScanHex(fileBytes, scanPosition):
+    sp = scanPosition
+    bitStream = ""
+    bytesAdded = 0
+    while(True):
+        (sp,byte) = readByte(fileBytes, sp)
+        if(byte == 0xFF):
+            (sp,marker) = readByte(fileBytes, sp)
+            if(marker == 0x00):
+                #Padding detected, add FF to bitsream
+                bitStream = bitStream + 'FF'
+                bytesAdded = bytesAdded + 1
+            elif(marker == 0xD9):
+                #End of file detected
+                break
+            else:
+                print("Error - 0xFF Not followed by stuffing or EOF")
+        else:
+            bitStream = bitStream + f'{byte:02x}'
+            bytesAdded = bytesAdded + 1
+        if(bytesAdded >= 16):
+            bitStream = bitStream + '\n'
+            bytesAdded = 0 
+    return (sp-2, bitStream)
+
+####### Start Extracting Data ############
 #Read file
-fileBytes = open(imgName, "rb").read()
-print("Reading image: "+imgName)
+print("--Reading image: "+imgName+" --")
+f = open(imgName, "rb")
+fileBytes = f.read()
+f.close()
 #Setup arrays to hold extracted data
 sp = 0 #Scan Position
 appHeader = []
@@ -43,7 +122,9 @@ else:
 #Start scanning bytes
 while(True):
     (sp,byte) = readByte(fileBytes, sp)
+    #Check for marker indicator oxFF
     if(byte == 0xFF):
+        #Read next bye to determine marker type
         (sp,marker) = readByte(fileBytes, sp)
         if (marker == 0xE0):
             print("App0 Header - JFIF")
@@ -87,19 +168,19 @@ while(True):
             print("Start of Frame - Baseline DCT-Based JPEG")
             (sp,length) = readWord(fileBytes, sp)
             (sp,prec) = readByte(fileBytes, sp)
-            print("Precision: " + str(prec) + " bits")
+            print("  Precision: " + str(prec) + " bits")
             (sp,Y) = readWord(fileBytes, sp)
             (sp,X) = readWord(fileBytes, sp)
-            print("Resolution: " + str(Y) + " x " + str(X) + " bits")
+            print("  Resolution: " + str(Y) + " x " + str(X) + " bits")
             (sp,num_c) = readByte(fileBytes, sp)
             for i in range(num_c):
                 (sp,c)=readByte(fileBytes, sp)
-                print("Channel: " + str(c))
+                print("  Channel: " + str(c))
                 (sp,b)=readByte(fileBytes, sp)
-                print("Horizontal Sampling Factor: " + str(b & 0b1111))
-                print("Vertical Sampling Factor: " + str(b >> 4))
+                print("  Horizontal Sampling Factor: " + str(b & 0b1111))
+                print("  Vertical Sampling Factor: " + str(b >> 4))
                 (sp,b)=readByte(fileBytes, sp)
-                print("Quantization Table Index: " + str(b))
+                print("  Quantization Table Index: " + str(b))
         elif (marker == 0xC2):
             print("Start of Frame - Progressive DCT-Based JPEG")
             exit()
@@ -135,24 +216,37 @@ while(True):
             for i in range(ns):
                 (sp,c)=readByte(fileBytes, sp)
                 (sp,t)=readByte(fileBytes, sp)
-                print("Channel: " + str(c))
-                print("DC Entropy Table Index: " + str(t & 0b1111))
-                print("AC Entropy Table Index: " + str(t >> 4))
+                print("  Channel: " + str(c))
+                print("  DC Entropy Table Index: " + str(t & 0b1111))
+                print("  AC Entropy Table Index: " + str(t >> 4))
             (sp,b)=readByte(fileBytes, sp)
-            print("Start of selection: " + str(b))
+            print("  Start of selection: " + str(b))
             (sp,b)=readByte(fileBytes, sp)
-            print("End of selection: " + str(b))
+            print("  End of selection: " + str(b))
             (sp,b)=readByte(fileBytes, sp)
-            print("Successive approx. bit position high: " + str(b & 0b1111))
-            print("Successive approx. bit position low: " + str(b >> 4))
+            print("  Successive approx. bit position high: " + str(b & 0b1111))
+            print("  Successive approx. bit position low: " + str(b >> 4))
+            #Extract image data
+            if(outType == "binary"):
+                (sp,bitStream) = readScan(fileBytes, sp)
+            elif(outType == "bin32"):
+                (sp,bitStream) = readScan32(fileBytes, sp)
+            else:
+                (sp,bitStream) = readScanHex(fileBytes, sp)
         elif (marker == 0xD9):
             print("End of Image")
             break
         else:
             print("Unrecognized marker: " + hex(marker))
-    # else:
-    #     print("Data not preceded by a marker: " + hex(byte))
+    else:
+        print("Data not preceded by a marker: " + hex(byte))
 
+####### Handle Extracted Data & Output ############
+#Write bitstream to file
+of = open(bitStreamOutFile, "w")
+of.write(bitStream)
+of.close()
+print("Recovered bitstream output to file: "+bitStreamOutFile)
 
 
 
