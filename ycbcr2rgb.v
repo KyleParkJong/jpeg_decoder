@@ -22,14 +22,14 @@ wire [16:0] b_tmp1, b_tmp2;
 assign r_tmp1 = ((y << 8) + (y << 5) + (y << 3) + (y << 1)) >> 8;  // 256+32+8+2 = 298
 assign r_tmp3 = ((cr << 8) + (cr << 7) + (cr << 4) + (cr << 3)) >> 8; // 256+128+16+8 = 408
 
-assign g_tmp1 = ((y << 8) + (y << 6) + (y << 3) + (y << 1)) >> 8; 
+assign g_tmp1 = ((y << 8) + (y << 5) + (y << 3) + (y << 1)) >> 8; 
 assign g_tmp2 = ((cb << 6) + (cb << 5) + (cb << 2)) >> 8;   // 64+32+4=100
 assign g_tmp3 = ((cr << 7) + (cr << 6) + (cr << 4)) >> 8; // 128+64+16=208
 
-assign b_tmp1 = ((y << 8) + (y << 6) + (y << 3) + (y << 1)) >> 8; // 298
+assign b_tmp1 = ((y << 8) + (y << 5) + (y << 3) + (y << 1)) >> 8; // 298
 assign b_tmp2 = ((cb << 9) + (cb << 2)) >> 8; // 512+4=516
 
-// Color Transformation in fixed point
+// Color Transformation
 assign r_tmp  = r_tmp1 + r_tmp3 - 223;
 assign g_tmp  = g_tmp1 - g_tmp2 - g_tmp3 + 136;
 assign b_tmp  = b_tmp1 + b_tmp2 - 277;
