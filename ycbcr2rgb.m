@@ -73,3 +73,15 @@ subplot(1, 2, 1);
 imshow(rgbImage); title('Original Image');
 subplot(1, 2, 2);
 imshow(rgbImage_v); title('Verilog outputs');
+
+error_R = abs(R_v - R_mat);
+error_G = abs(G_v - G_mat);
+error_B = abs(B_v - B_mat);
+
+max_error_R = max(max(error_R));
+max_error_G = max(max(error_G));
+max_error_B = max(max(error_B));
+
+min_error_R = min(min(error_R));
+min_error_G = min(min(error_G));
+min_error_B = min(min(error_B));
