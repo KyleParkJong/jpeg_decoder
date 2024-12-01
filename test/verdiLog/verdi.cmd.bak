@@ -1,0 +1,2 @@
+verdiSetActWin -dock widgetDock_<Decl._Tree>
+debImport "huffman_decoder.vg"
