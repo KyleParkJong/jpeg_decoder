@@ -1,7 +1,7 @@
 VCS = vcs -kdb -sverilog -debug_access+all+reverse
 
-TB = zigzag_tb.sv
-RTL = zigzag.sv 
+TB = vli_decoder_tb.sv
+RTL = zigzag.sv huffman_decoder.sv vli_decoder.sv
 DEFS = sys_defs.svh
 
 .DEFAULT_GOAL = sim
@@ -32,4 +32,5 @@ clean:
 	rm -rf *.lib++ 
 	rm -rf *.vpd DVEfiles
 	rm -rf .inter* .vcs* .restart*
+	rm -rf *.chk *.rep
 
