@@ -9,7 +9,7 @@ dct = cos(t);
 % i = cos(pi()/N*(n+.5)*k);
 %plot(cos(t))
 
-A=imread('my_cat.png');
+A=imread('../images/my_cat.png');
 A=mean(A,3);
 B=filter2([.3,.3,.3;.3,.3,.3;.3,.3,.3],A);
 C=A(1:3:end,1:3:end);
