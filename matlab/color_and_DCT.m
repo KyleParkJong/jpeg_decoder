@@ -1,6 +1,6 @@
 % STEP 1: Color transforamtion %
 % RGB -> YCbCr
-rgbImage = imread('my_cat.png');
+rgbImage = imread('../images/my_cat.png');
 
 % Transformation matrix
 tform = [65.481/255, 128.553/255, 24.966/255;
