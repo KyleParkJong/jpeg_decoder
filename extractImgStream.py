@@ -1,5 +1,6 @@
 import struct
 import huffman
+import functions
 
 ######## USER - ENTER I/O FILE NAMES ###########
 imgName = "cat_august.jpg" #"charcoal_cat.jpg"#
@@ -23,11 +24,49 @@ def splitByte(byteInt):
     lower = b_str[4:8]
     return (int(upper),int(lower))
 
-def printMatrix8(matrix):
+def printMatrix8(matrix1D):
     for row in range(8):
         for col in range(8):
-            print("%02d, " %(matrix[col+row*8]), end="")
+            print("%02d, " %(matrix1D[col+row*8]), end="")
         print()
+
+def deZigZag(matrix1D):
+    #Create empty 8x8 matrix
+    matrix2D_out = [[0 for i in range(8)] for i in range(8)]
+    #De-zigzag algorithm
+    row = 0
+    col = 0
+    direction ="up&Right"
+    i = 0
+    while(True):
+        matrix2D_out[row][col] = matrix1D[i]
+        i+=1
+        #print(row,col)
+        if(row == 7 and col ==7):
+            break
+        elif(row == 0 and direction=="up&Right"):
+            col += 1
+            direction = "down&Left"
+        elif(col == 0 and direction=="down&Left"):
+            if(row == 7):
+                col +=1
+            else:
+                row += 1
+            direction = "up&Right"
+        elif(col == 7 and direction=="up&Right"):
+            row += 1
+            direction = "down&Left"
+        elif(row == 7 and direction=="down&Left"):
+            col += 1
+            direction = "up&Right"
+        else:
+            if(direction == "up&Right"):
+                row -= 1
+                col += 1
+            if(direction == "down&Left"):
+                row += 1
+                col -= 1
+    return functions.matrix2D_to1D(matrix2D_out)
 
 def readScan(fileBytes, scanPosition):
     sp = scanPosition
@@ -152,7 +191,7 @@ while(True):
             print("App1 Header - EXIF")
             quit()
         elif (marker == 0xDB):
-            print("Quantization Table")
+            print("Quantization Table (Zig-zag order)")
             (sp,length) = readWord(fileBytes, sp)
             destination = "empty"
             for i in range(length-2):
@@ -262,3 +301,12 @@ for i in range(len(huffSizeTables[1])):
     fileName = "AC_HuffTable_Index"+str(i)+".txt"
     hf.WriteTableToFile(fileName)
     print("Recovered Huffman Table output to file: "+fileName)
+#Write Quantization tables to files
+for i in range(len(quantTables)):
+    fileName = "QuantTable"+str(i)+".txt"
+    print("Recovered Quantization Table output to file: "+fileName)
+    table = deZigZag(quantTables[i])
+    of = open(fileName, "w")
+    for i in range(8):
+        of.write(str(table[i*8:i*8+8])[1:-1]+"\n")
+    of.close()
