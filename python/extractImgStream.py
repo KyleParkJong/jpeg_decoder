@@ -3,7 +3,8 @@ import huffman
 import functions
 
 ######## USER - ENTER I/O FILE NAMES ###########
-imgName = "cat_august.jpg" #"charcoal_cat.jpg"#
+imgName = "../images/cat_august.jpg" #"charcoal_cat.jpg"#
+outFolder = "output"
 bitStreamOutFile = "bitStream.txt"
 ######## USER - CONFIGURE PARAMETERS ###########
 outType = "bin32" #Options: "binary" = one long string, "bin32" = lines of 32 bits, "hex" = lines of 32 hex
@@ -283,6 +284,7 @@ while(True):
 
 ####### Handle Extracted Data & Output ############
 #Write bitstream to file
+bitStreamOutFile = outFolder+"/"+bitStreamOutFile
 of = open(bitStreamOutFile, "w")
 of.write(bitStream)
 of.close()
@@ -291,19 +293,19 @@ print("Recovered bitstream output to file: "+bitStreamOutFile)
 for i in range(len(huffSizeTables[0])):
     hf = huffman.HuffmanTable()
     hf.GetHuffmanBits(huffSizeTables[0][i], huffValTables[0][i])
-    fileName = "DC_HuffTable_Index"+str(i)+".txt"
+    fileName = outFolder+"/"+"DC_HuffTable_Index"+str(i)+".txt"
     hf.WriteTableToFile(fileName)
     print("Recovered Huffman Table output to file: "+fileName)
 #Write AC huffman tables to files
 for i in range(len(huffSizeTables[1])):
     hf = huffman.HuffmanTable()
     hf.GetHuffmanBits(huffSizeTables[1][i], huffValTables[1][i])
-    fileName = "AC_HuffTable_Index"+str(i)+".txt"
+    fileName = outFolder+"/"+"AC_HuffTable_Index"+str(i)+".txt"
     hf.WriteTableToFile(fileName)
     print("Recovered Huffman Table output to file: "+fileName)
 #Write Quantization tables to files
 for i in range(len(quantTables)):
-    fileName = "QuantTable"+str(i)+".txt"
+    fileName = outFolder+"/"+"QuantTable"+str(i)+".txt"
     print("Recovered Quantization Table output to file: "+fileName)
     table = deZigZag(quantTables[i])
     of = open(fileName, "w")

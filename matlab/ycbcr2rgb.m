@@ -2,7 +2,7 @@ clc;
 clear;
 close all;
 
-rgbImage = imread('Lenna.png');
+rgbImage = imread('../images/Lenna.png');
 
 tform = [65.738/256, 129.057/256, 25.064/256;
         -37.945/256, -74.494/256, 112.439/256;

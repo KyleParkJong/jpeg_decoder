@@ -4,7 +4,7 @@ close all;
 
 % STEP 1: Color transforamtion %
 % RGB -> YCbCr
-rgbImage = imread('my_cat.png');
+rgbImage = imread('../images/my_cat.png');
 figure()
 imshow(rgbImage)
 
