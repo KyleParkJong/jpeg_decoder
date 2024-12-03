@@ -3,8 +3,7 @@
 module huffman_decoder(
     input  HUFF_TABLE_ENTRY [`H-1:0] table,
     input  logic [15:0]     code,
-    output logic [3:0]      run,
-    output logic [3:0]      size,
+    output logic [3:0]      run, vli_size, code_size,
     output logic            valid
 );
 
@@ -22,8 +21,9 @@ always_comb begin
             index = i;
         end
     end
-    run   = table[index].symbol[7:4];
-    size  = table[index].symbol[3:0];
+    run       = table[index].symbol[7:4];
+    vli_size  = table[index].symbol[3:0];
+    code_size = table[index].size;
     valid = index >= 0;
 end
 
