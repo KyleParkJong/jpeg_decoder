@@ -4,7 +4,7 @@
 `timescale 1ns/100ps
 
 `define Q  8                    // Precision (bits)
-`define H  3                    // Size of Huffman table (number of entries)
+`define H  4                    // Size of Huffman table (number of entries)
 `define IN 32                   // Int to decoder (bits per cycle)
 `define PERIOD 20               // Clock period (ns)
 `define IN_BUS_WIDTH 32         // Input bus bit width 
