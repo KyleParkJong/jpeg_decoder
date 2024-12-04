@@ -1,6 +1,6 @@
 VCS = vcs -kdb -sverilog -debug_access+all+reverse
 
-TB = input_buffer_tb.sv
+TB = input_system_tb.sv
 RTL = zigzag.sv huffman_decoder.sv vli_decoder.sv input_buffer.sv
 DEFS = sys_defs.svh
 
