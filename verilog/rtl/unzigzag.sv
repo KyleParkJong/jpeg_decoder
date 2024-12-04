@@ -1,8 +1,8 @@
 `include "sys_defs.svh"
 
 module unzigzag(
-    input logic [`BLOCK_BUFF_SIZE-1:0][`Q-1:0] line,
-    output logic signed [`Q-1:0] block [7:0][7:0]
+    input logic [`BLOCK_BUFF_SIZE-1:0][11:0] line,
+    output logic signed [11:0] block [7:0][7:0]
 );
 
 logic [3:0] r_lut [0:63] = {
