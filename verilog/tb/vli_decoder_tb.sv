@@ -76,6 +76,12 @@ module vli_decoder_tb;
         #`PERIOD
         check();
 
+        size = 4'd0;
+        symbol = 1'b1;
+        ideal = 12'd0;
+        #`PERIOD
+        check();
+
         /*
         // Robustness of size-symbol mismatch (doesn't work for positive
         // symbols
