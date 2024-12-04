@@ -69,7 +69,7 @@ while (~isempty(values_in))
             cnt = 0;
             cnt_block = cnt_block + 1;
             display(cnt_block)
-        elseif run_length == 15 && b_size == 0  % append 16 zeros (15,0)
+        elseif run_length == 15 && b_size == 0  % append 16 zeros
             zeros_to_append = zeros(1, 16);
             decoded_values = [decoded_values, zeros_to_append];   % adding zeros
             values_in = values_out(b_size+1:end);
