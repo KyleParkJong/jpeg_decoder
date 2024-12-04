@@ -13,7 +13,6 @@ module input_buffer_tb;
 
     task check;
         begin
-
             $write("=======================================================\n");
             $write("Data In: %x, Huff Size: %d, VLI Size: %d \n", data_in, 
                 huff_size, vli_size,

@@ -8,17 +8,18 @@ module huffman_decoder_tb;
     logic [3:0] run;
     logic [3:0] vli_size;
     logic [3:0] code_size;
-    logic valid;
+    logic valid_in, valid_out;
 
     huffman_decoder dut (
         // in
         table,
         code,
+        valid_in,
         // out
         run,
         vli_size,
         code_size,
-        valid
+        valid_out
     );
 
     task write_symbol;

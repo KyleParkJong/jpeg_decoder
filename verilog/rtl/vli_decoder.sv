@@ -11,6 +11,7 @@ always_comb begin
         value = 0;
     end else if (!symbol[size-1]) begin
         case (size)
+            4'd0: value = 12'b0;
             4'd1: value = {{11{1'b1}}, 1'(symbol+1)};
             4'd2: value = {{10{1'b1}}, 2'(symbol+1)};
             4'd3: value = {{9{1'b1}}, 3'(symbol+1)};
