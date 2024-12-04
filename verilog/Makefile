@@ -1,8 +1,8 @@
 VCS = vcs -kdb -sverilog -debug_access+all+reverse
 
-TB = block_buffer_tb.sv
+TB = unzigzag_tb.sv
 TB_LIBS = displays.sv
-RTL = zigzag.sv huffman_decoder.sv vli_decoder.sv input_buffer.sv block_buffer.sv
+RTL = unzigzag.sv huffman_decoder.sv vli_decoder.sv input_buffer.sv block_buffer.sv
 DEFS = sys_defs.svh
 
 .DEFAULT_GOAL = sim
