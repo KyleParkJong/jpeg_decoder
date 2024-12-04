@@ -3,12 +3,13 @@
 
 `timescale 1ns/100ps
 
-`define Q  8                // Precision (bits)
-`define H  3                // Size of Huffman table (number of entries)
-`define IN 32               // Int to decoder (bits per cycle)
-`define PERIOD 20           // Clock period (ns)
-`define IN_BUS_WIDTH 32     // Input bus bit width 
-`define IN_BUFF_SIZE 48     // Size of input buffer
+`define Q  8                    // Precision (bits)
+`define H  3                    // Size of Huffman table (number of entries)
+`define IN 32                   // Int to decoder (bits per cycle)
+`define PERIOD 20               // Clock period (ns)
+`define IN_BUS_WIDTH 32         // Input bus bit width 
+`define IN_BUFF_SIZE 48         // Size of input buffer (bits)
+`define BLOCK_BUFF_SIZE 64      // Size of block buffer (#coeffs)
 
 typedef struct packed {
     logic [3:0]  size;

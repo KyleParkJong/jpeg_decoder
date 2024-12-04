@@ -1,12 +1,13 @@
 VCS = vcs -kdb -sverilog -debug_access+all+reverse
 
-TB = input_system_tb.sv
-RTL = zigzag.sv huffman_decoder.sv vli_decoder.sv input_buffer.sv
+TB = block_buffer_tb.sv
+TB_LIBS = displays.sv
+RTL = zigzag.sv huffman_decoder.sv vli_decoder.sv input_buffer.sv block_buffer.sv
 DEFS = sys_defs.svh
 
 .DEFAULT_GOAL = sim
 
-SOURCES = $(addprefix tb/, $(TB)) $(addprefix rtl/, $(RTL)) $(DEFS)
+SOURCES = $(addprefix tb/, $(TB_LIBS) $(TB)) $(addprefix rtl/, $(RTL)) $(DEFS)
 
 simv: $(SOURCES)
 	$(VCS) $^ -o $@
