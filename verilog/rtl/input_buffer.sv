@@ -30,13 +30,13 @@ always_comb begin
             buffer_n[(tail+i) % `IN_BUFF_SIZE] = data_in[i];
         end
         tail_n = (tail + `IN_BUS_WIDTH) % `IN_BUFF_SIZE;
-        count_n = count + `IN_BUS_WIDTH;
+        count_n += `IN_BUS_WIDTH;
     end
     
     // Reading buffer
     if (rd_en) begin
         head_n = (head + huff_size + vli_size) % `IN_BUFF_SIZE;
-        count_n = count - huff_size - vli_size;
+        count_n -= (huff_size + vli_size);
     end
 
     // Output top 16 bits to Huffman
