@@ -1,10 +1,11 @@
 import struct
 import huffman
 import functions
+from pathlib import Path
 
 ######## USER - ENTER I/O FILE NAMES ###########
-imgName = "../images/cat_august.jpg" #"charcoal_cat.jpg"#
-outFolder = "output"
+imgName = "../images/tiny.jpg" #"charcoal_cat.jpg"#
+outFolder = "tiny"
 bitStreamOutFile = "bitStream.txt"
 ######## USER - CONFIGURE PARAMETERS ###########
 outType = "bin32" #Options: "binary" = one long string, "bin32" = lines of 32 bits, "hex" = lines of 32 hex
@@ -212,14 +213,14 @@ while(True):
             print("  Precision: " + str(prec) + " bits")
             (sp,Y) = readWord(fileBytes, sp)
             (sp,X) = readWord(fileBytes, sp)
-            print("  Resolution: " + str(Y) + " x " + str(X) + " bits")
+            print("  Resolution: " + str(Y) + " x " + str(X) + " pix")
             (sp,num_c) = readByte(fileBytes, sp)
             for i in range(num_c):
                 (sp,c)=readByte(fileBytes, sp)
                 print("  Channel: " + str(c))
                 (sp,b)=readByte(fileBytes, sp)
-                print("  Horizontal Sampling Factor: " + str(b & 0b1111))
-                print("  Vertical Sampling Factor: " + str(b >> 4))
+                print("  Horizontal Sampling Factor: " + str(b >> 4))
+                print("  Vertical Sampling Factor: " + str(b & 0b1111))
                 (sp,b)=readByte(fileBytes, sp)
                 print("  Quantization Table Index: " + str(b))
         elif (marker == 0xC2):
@@ -254,6 +255,10 @@ while(True):
             print("Start of Scan")
             (sp,length) = readWord(fileBytes, sp)
             (sp,ns) = readByte(fileBytes, sp)
+            if(ns>1):
+                print("  Components in Scan = "+str(ns)+". Interleaved")
+            else:
+                print("  Components in Scan = "+str(ns)+". Non-Interleaved")
             for i in range(ns):
                 (sp,c)=readByte(fileBytes, sp)
                 (sp,t)=readByte(fileBytes, sp)
@@ -283,6 +288,8 @@ while(True):
         print("Data not preceded by a marker: " + hex(byte))
 
 ####### Handle Extracted Data & Output ############
+#Create output folder
+Path(outFolder).mkdir(parents=True, exist_ok=True)
 #Write bitstream to file
 bitStreamOutFile = outFolder+"/"+bitStreamOutFile
 of = open(bitStreamOutFile, "w")
