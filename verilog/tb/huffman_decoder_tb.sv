@@ -6,23 +6,26 @@ module huffman_decoder_tb;
     HUFF_TABLE_ENTRY [`H-1:0] table;
     logic [15:0] code;
     logic [3:0] run;
-    logic [3:0] size;
-    logic valid;
+    logic [3:0] vli_size;
+    logic [3:0] code_size;
+    logic valid_in, valid_out;
 
     huffman_decoder dut (
         // in
         table,
         code,
+        valid_in,
         // out
         run,
-        size,
-        valid
+        vli_size,
+        code_size,
+        valid_out
     );
 
     task write_symbol;
         begin
-            $write("Valid: %b, Code: %x, Run: %d, Size: %d\n", 
-                valid, code, run, size);
+            $write("Valid: %b, Code: %x, Run: %d, VLI Size: %d, Code Size: %d\n", 
+                valid, code, run, vli_size, code_size);
         end
     endtask
 
@@ -43,16 +46,29 @@ module huffman_decoder_tb;
         code = 16'h15;
         #`PERIOD
         write_symbol();
+        assert(code_size == 4'h5) else $finish;
+        assert(vli_size == 4'h9) else $finish;
+        assert(run == 4'h6) else $finish;
+        assert(valid == 1'h1) else $finish;
         code = 16'h3;
         #`PERIOD
         write_symbol();
+        assert(code_size == 4'h2) else $finish;
+        assert(vli_size == 4'h1) else $finish;
+        assert(run == 4'h0) else $finish;
+        assert(valid == 1'h1) else $finish;
         code = 16'h23;
         #`PERIOD
         write_symbol();
+        assert(code_size == 4'h9) else $finish;
+        assert(vli_size == 4'h4) else $finish;
+        assert(run == 4'h3) else $finish;
+        assert(valid == 1'h1) else $finish;
         code = 16'h69;
         #`PERIOD
         write_symbol();
-        
+        assert(valid == 1'h0);
+        $write("\033[32;1mPassed\033[0m\n");
         $finish;
     end
 

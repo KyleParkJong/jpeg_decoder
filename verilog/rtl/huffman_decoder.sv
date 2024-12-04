@@ -3,9 +3,9 @@
 module huffman_decoder(
     input  HUFF_TABLE_ENTRY [`H-1:0] table,
     input  logic [15:0]     code,
-    output logic [3:0]      run,
-    output logic [3:0]      size,
-    output logic            valid
+    input logic             valid_in,
+    output logic [3:0]      run, vli_size, code_size,
+    output logic            valid_out
 );
 
 logic signed [$clog2(`H)+1:0] index;
@@ -14,17 +14,25 @@ logic [`H-1:0][15:0] mask;
 always_comb begin
     index = -1;
     mask = 0;
-    for (int i = 0; i < `H; ++i) begin
-        for (int j = 0; j < table[i].size; ++j) begin
-            mask[i][j] = 1'b1;
+    if (valid_in) begin
+        for (int i = 0; i < `H; ++i) begin
+            for (int j = 0; j < table[i].size; ++j) begin
+                mask[i][j] = 1'b1;
+            end
+            if (table[i].code == (code & mask[i])) begin
+                index = i;
+            end
         end
-        if (table[i].code == (code & mask[i])) begin
-            index = i;
-        end
+        run       = table[index].symbol[7:4];
+        vli_size  = table[index].symbol[3:0];
+        code_size = table[index].size;
+    end else begin
+        run = 0;
+        vli_size = 0;
+        code_size = 0;
     end
-    run   = table[index].symbol[7:4];
-    size  = table[index].symbol[3:0];
-    valid = index >= 0;
+
+    valid_out = index >= 0;
 end
 
 endmodule
