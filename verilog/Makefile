@@ -2,7 +2,7 @@ VCS = vcs -kdb -sverilog -debug_access+all+reverse
 
 TB = entropy_decoding_tb.sv
 TB_LIBS = displays.sv
-RTL = unzigzag.sv huffman_decoder.sv vli_decoder.sv input_buffer.sv block_buffer.sv entropy_decoding.sv
+RTL = unzigzag.sv huffman_decoder.sv vli_decoder.sv input_buffer.sv block_buffer.sv entropy_decoding.sv diff_decoder.sv
 DEFS = sys_defs.svh
 
 .DEFAULT_GOAL = sim

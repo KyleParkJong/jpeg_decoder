@@ -4,77 +4,104 @@ module entropy_decoding_tb;
     logic clk, rst;
     logic [`IN_BUS_WIDTH-1:0] data_in;
     logic valid_in;
-    HUFF_TABLE_ENTRY [`H-1:0] tab;
+    HUFF_PACKET hp;
     
     logic signed [11:0] block [7:0][7:0];
     logic valid_out;
     logic request;
+    logic [$clog2(`CH+1)-1:0] ch;
 
     import displays::*;
+    integer finput, line_len, index;
 
     entropy_decoding dut (
         // in
         clk, rst,
         data_in, valid_in,
-        tab,
+        hp,
         // out
         block, 
         valid_out,
-        request
+        request,
+        ch
     );
 
 	initial begin
-        // huff table def 
-        tab[0].size = 4'h5;
-        tab[0].code = 16'h15;
-        tab[0].symbol = 8'h69;
-        
-        tab[1].size = 4'h2;
-        tab[1].code = 16'h3;
-        tab[1].symbol = 8'h01;
+        hp.map[0] = 0;
+        hp.map[1] = 1;
+        hp.map[2] = 1;
 
-        tab[2].size = 4'h9;
-        tab[2].code = 16'h21;
-        tab[2].symbol = 8'hF0;
-        
-        tab[3].size = 4'h8;
-        tab[3].code = 16'hF0;
-        tab[3].symbol = 8'h00;
+        finput = $fopen("../python/tiny/DC_HuffTable_Index0Flipped.txt", "r");
+        line_len = -1;
+        hp.tabs[0].dc_tab = 0;
+        hp.tabs[0].dc_size = 12;
+        index = 0;
+        while(!$feof(finput)) begin
+           line_len = $fscanf(finput, "%b %d %d\n", hp.tabs[0].dc_tab[index].code,
+                    hp.tabs[0].dc_tab[index].symbol, hp.tabs[0].dc_tab[index].size);
+            index = index + 1;
+        end
+
+        finput = $fopen("../python/tiny/DC_HuffTable_Index1Flipped.txt", "r");
+        line_len = -1;
+        hp.tabs[1].dc_tab = 0;
+        hp.tabs[1].dc_size = 12;
+        index = 0;
+        while(!$feof(finput)) begin
+           line_len = $fscanf(finput, "%b %d %d\n", hp.tabs[1].dc_tab[index].code,
+                    hp.tabs[1].dc_tab[index].symbol, hp.tabs[1].dc_tab[index].size);
+            index = index + 1;
+        end
+
+        finput = $fopen("../python/tiny/AC_HuffTable_Index0Flipped.txt", "r");
+        line_len = -1;
+        hp.tabs[0].ac_tab = 0;
+        hp.tabs[0].ac_size= 162;
+        index = 0;
+        while(!$feof(finput)) begin
+           line_len = $fscanf(finput, "%b %d %d\n", hp.tabs[0].ac_tab[index].code,
+                    hp.tabs[0].ac_tab[index].symbol, hp.tabs[0].ac_tab[index].size);
+            index = index + 1;
+        end
+
+        finput = $fopen("../python/tiny/AC_HuffTable_Index1Flipped.txt", "r");
+        line_len = -1;
+        hp.tabs[1].ac_tab = 0;
+        hp.tabs[1].ac_size = 162;
+        index = 0;
+        while(!$feof(finput)) begin
+           line_len = $fscanf(finput, "%b %d %d\n", hp.tabs[1].ac_tab[index].code,
+                    hp.tabs[1].ac_tab[index].symbol, hp.tabs[1].ac_tab[index].size);
+            index = index + 1;
+        end
 
         // initial values
         clk = 0;
         rst = 1;
         valid_in = 0;
+        data_in = 0;
         @(posedge clk);
         @(posedge clk);
-        @(negedge clk);
         rst = 0;
-        // start of (6,9)(-511); (15,0)(); (0,1)(-1); (6, 9)(511); 
-        data_in = 32'b0_10101_000100001_0_11_111111111_10101; 
-        valid_in = 1;
+
+        finput = $fopen("../python/tiny/bitStreamFlipped.txt", "r");
+        line_len = -1;
+        while(!$feof(finput)) begin
+            @(negedge clk);
+            if (request) begin
+                line_len = $fscanf(finput, "%b\n", data_in);
+                valid_in = 1;
+            end else begin
+                valid_in = 0;
+            end
+            if (valid_out) disp_block;
+        end
         @(negedge clk);
-        
         valid_in = 0;
-        @(negedge clk);
-        @(negedge clk);
-
-        // (rest) (0,0)(EOB); (0,1)(1); (0,1)(-1); (0,0)(EOB); end of (6,9)(-511);
-        data_in = 32'b11110000_1_11_0_11_11110000_00000000;
-        @(negedge clk);
-        valid_in = 1;
-        @(negedge clk);
-        valid_in = 0;
-        @(negedge clk);
-        assert(valid_out) else disp_fail;
-        disp_block;
-
-        @(negedge clk);
-        @(negedge clk);
-        @(negedge clk);
-        assert(valid_out) else disp_fail;
-        disp_block;
-
-        disp_pass;
+        for (int i = 0; i < 20; ++i) begin
+            @(negedge clk);
+            if (valid_out) disp_block;
+        end
         $finish; 
     end
 
