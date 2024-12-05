@@ -7,6 +7,7 @@ from pathlib import Path
 imgName = "../images/tiny.jpg" #"charcoal_cat.jpg"#
 outFolder = "tiny"
 bitStreamOutFile = "bitStream.txt"
+bitStreamOutFileFlipped = "bitStreamFlipped.txt"
 ######## USER - CONFIGURE PARAMETERS ###########
 outType = "bin32" #Options: "binary" = one long string, "bin32" = lines of 32 bits, "hex" = lines of 32 hex
 ################################################
@@ -292,23 +293,33 @@ while(True):
 Path(outFolder).mkdir(parents=True, exist_ok=True)
 #Write bitstream to file
 bitStreamOutFile = outFolder+"/"+bitStreamOutFile
+bitStreamOutFileFlipped = outFolder+"/"+bitStreamOutFileFlipped
 of = open(bitStreamOutFile, "w")
 of.write(bitStream)
 of.close()
+off = open(bitStreamOutFileFlipped, "w")
+for line in bitStream.split("\n"):
+    line = line[::-1]
+    off.write(line+"\n")
+off.close()
 print("Recovered bitstream output to file: "+bitStreamOutFile)
 #Write DC huffman tables to files
 for i in range(len(huffSizeTables[0])):
     hf = huffman.HuffmanTable()
     hf.GetHuffmanBits(huffSizeTables[0][i], huffValTables[0][i])
     fileName = outFolder+"/"+"DC_HuffTable_Index"+str(i)+".txt"
+    fileNameFlipped = outFolder+"/"+"DC_HuffTable_Index"+str(i)+"Flipped.txt"
     hf.WriteTableToFile(fileName)
+    hf.WriteTableToFileFlipped(fileNameFlipped)
     print("Recovered Huffman Table output to file: "+fileName)
 #Write AC huffman tables to files
 for i in range(len(huffSizeTables[1])):
     hf = huffman.HuffmanTable()
     hf.GetHuffmanBits(huffSizeTables[1][i], huffValTables[1][i])
     fileName = outFolder+"/"+"AC_HuffTable_Index"+str(i)+".txt"
+    fileNameFlipped = outFolder+"/"+"AC_HuffTable_Index"+str(i)+"Flipped.txt"
     hf.WriteTableToFile(fileName)
+    hf.WriteTableToFileFlipped(fileNameFlipped)
     print("Recovered Huffman Table output to file: "+fileName)
 #Write Quantization tables to files
 for i in range(len(quantTables)):
