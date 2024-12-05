@@ -75,7 +75,7 @@ diff_decoder diff (
 block_buffer block_buff (
     // in
     clk, rst,
-    vli_value,  // from vli
+    diff_value,  // from vli
     run, huff_valid, // from huff
     freq, // from entropy controller (this module)
     // out

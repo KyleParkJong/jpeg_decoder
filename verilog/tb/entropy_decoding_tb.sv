@@ -13,6 +13,7 @@ module entropy_decoding_tb;
 
     import displays::*;
     integer finput, line_len, index;
+    string imgname = "tinyWide";
 
     entropy_decoding dut (
         // in
@@ -31,7 +32,7 @@ module entropy_decoding_tb;
         hp.map[1] = 1;
         hp.map[2] = 1;
 
-        finput = $fopen("../python/tiny/DC_HuffTable_Index0Flipped.txt", "r");
+        finput = $fopen({"../python/",imgname,"/DC_HuffTable_Index0Flipped.txt"}, "r");
         line_len = -1;
         hp.tabs[0].dc_tab = 0;
         hp.tabs[0].dc_size = 12;
@@ -42,7 +43,7 @@ module entropy_decoding_tb;
             index = index + 1;
         end
 
-        finput = $fopen("../python/tiny/DC_HuffTable_Index1Flipped.txt", "r");
+        finput = $fopen({"../python/",imgname,"/DC_HuffTable_Index1Flipped.txt"}, "r");
         line_len = -1;
         hp.tabs[1].dc_tab = 0;
         hp.tabs[1].dc_size = 12;
@@ -53,7 +54,7 @@ module entropy_decoding_tb;
             index = index + 1;
         end
 
-        finput = $fopen("../python/tiny/AC_HuffTable_Index0Flipped.txt", "r");
+        finput = $fopen({"../python/",imgname,"/AC_HuffTable_Index0Flipped.txt"}, "r");
         line_len = -1;
         hp.tabs[0].ac_tab = 0;
         hp.tabs[0].ac_size= 162;
@@ -64,7 +65,7 @@ module entropy_decoding_tb;
             index = index + 1;
         end
 
-        finput = $fopen("../python/tiny/AC_HuffTable_Index1Flipped.txt", "r");
+        finput = $fopen({"../python/",imgname,"/AC_HuffTable_Index1Flipped.txt"}, "r");
         line_len = -1;
         hp.tabs[1].ac_tab = 0;
         hp.tabs[1].ac_size = 162;
@@ -84,7 +85,7 @@ module entropy_decoding_tb;
         @(posedge clk);
         rst = 0;
 
-        finput = $fopen("../python/tiny/bitStreamFlipped.txt", "r");
+        finput = $fopen({"../python/",imgname,"/bitStreamFlipped.txt"}, "r");
         line_len = -1;
         while(!$feof(finput)) begin
             @(negedge clk);
