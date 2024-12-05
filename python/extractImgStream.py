@@ -4,9 +4,8 @@ import functions
 from pathlib import Path
 
 ######## USER - ENTER I/O FILE NAMES ###########
-imgName = "../images/tiny.jpg" #"charcoal_cat.jpg"#
-outFolder = "tiny"
-bitStreamOutFile = "bitStream.txt"
+imgName = "../images/cat_august.jpg" #"charcoal_cat.jpg"#
+outFolder = "cat_august"
 ######## USER - CONFIGURE PARAMETERS ###########
 outType = "bin32" #Options: "binary" = one long string, "bin32" = lines of 32 bits, "hex" = lines of 32 hex
 ################################################
@@ -153,6 +152,7 @@ quantTables = []
 huffSizeTables = [[],[]] #Size of Code Tables. [DC Tables(up to 4), AC Tables(up to 4)] 
 huffValTables = [[],[]] #Value of Codes Tables. [DC Tables(up to 4), AC Tables(up to 4)]
 bitStream = []
+imgDimensions = []
 
 #Check for valid Start of Image Marker
 (sp,marker) = readWord(fileBytes, sp)
@@ -213,6 +213,7 @@ while(True):
             print("  Precision: " + str(prec) + " bits")
             (sp,Y) = readWord(fileBytes, sp)
             (sp,X) = readWord(fileBytes, sp)
+            imgDimensions = (Y,X)
             print("  Resolution: " + str(Y) + " x " + str(X) + " pix")
             (sp,num_c) = readByte(fileBytes, sp)
             for i in range(num_c):
@@ -291,11 +292,11 @@ while(True):
 #Create output folder
 Path(outFolder).mkdir(parents=True, exist_ok=True)
 #Write bitstream to file
-bitStreamOutFile = outFolder+"/"+bitStreamOutFile
-of = open(bitStreamOutFile, "w")
+fileName = outFolder+"/bitStream.txt"
+of = open(fileName, "w")
 of.write(bitStream)
 of.close()
-print("Recovered bitstream output to file: "+bitStreamOutFile)
+print("Recovered bitstream output to file: "+fileName)
 #Write DC huffman tables to files
 for i in range(len(huffSizeTables[0])):
     hf = huffman.HuffmanTable()
@@ -319,3 +320,9 @@ for i in range(len(quantTables)):
     for i in range(8):
         of.write(str(table[i*8:i*8+8])[1:-1]+"\n")
     of.close()
+#Write Start of Frame and Start of Scan Info
+fileName = outFolder+"/"+"HeaderInfo.txt"
+of = open(fileName, "w")
+of.write(str(imgDimensions[0])+","+str(imgDimensions[1])+"\n")
+print("Recovered Header Info output to file: "+fileName)
+of.close()
