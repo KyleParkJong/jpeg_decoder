@@ -15,11 +15,12 @@ logic valid_in_array                [7:0];
 logic first_valid_out_array         [7:0];
 logic [7:0] second_valid_out_array;
 
-logic signed [63:0] idct_in_extended      [7:0][7:0];
-logic signed [63:0] transposed_block      [7:0][7:0];
-logic signed [63:0] first_idct_out_array  [7:0][7:0];
-logic signed [63:0] second_idct_out_array [7:0][7:0];
-logic signed [63:0] idct_out_normalized   [7:0][7:0];
+logic signed [63:0] idct_in_extended               [7:0][7:0];
+logic signed [63:0] transposed_block               [7:0][7:0];
+logic signed [63:0] first_idct_out_array           [7:0][7:0];
+logic signed [63:0] second_idct_out_array          [7:0][7:0];
+logic signed [63:0] idct_out_normalized            [7:0][7:0];
+logic signed [63:0] idct_out_norm_before_transpose [7:0][7:0];
 
 always_comb begin
     for(int i = 0; i < 8; i++) begin
@@ -191,21 +192,30 @@ loeffler_idct col7_idct (
     .valid_out(second_valid_out_array[7])
 );
 
-// Divide by 8 since Loeffler's DCT output is 8 times larger
+// Divide by 8 to normalize since Loeffler's DCT output is 8 times larger
 always_comb begin
     for(int row = 0; row < 8; row++) begin
         for(int col = 0; col < 8; col++) begin
             idct_out_normalized[row][col] = (second_idct_out_array[row][col] / 8);
             
             if(idct_out_normalized[row][col] > 255) begin
-                idct_out[row][col] = 255;
+                idct_out_norm_before_transpose[row][col] = 255;
             end
             else if(idct_out_normalized[row][col] < -255) begin
-                idct_out[row][col] = -255;
+                idct_out_norm_before_transpose[row][col] = -255;
             end
             else begin
-                idct_out[row][col] = idct_out_normalized[row][col];
+                idct_out_norm_before_transpose[row][col] = idct_out_normalized[row][col];
             end
+        end
+    end
+end
+
+// Transpose for final output
+always_comb begin
+    for(int row = 0; row < 8; row++) begin
+        for(int col = 0; col < 8; col++) begin
+            idct_out[row][col] = idct_out_norm_before_transpose[col][row];
         end
     end
 end
