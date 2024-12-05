@@ -2,11 +2,17 @@
 
 module vli_decoder (
     input logic [3:0] size,
-    input logic [10:0] symbol,
+    input logic [10:0] symbol_in,
     output logic signed [11:0] value
 );
 
+logic [10:0] symbol;
+
 always_comb begin
+    symbol = 0;
+    for (int i = 0; i < size; ++i) begin
+        symbol[size-1-i] = symbol_in[i];
+    end
     if (size == 0) begin
         value = 0;
     end else if (!symbol[size-1]) begin

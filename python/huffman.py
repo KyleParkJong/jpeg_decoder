@@ -92,6 +92,12 @@ class HuffmanTable:
         for i in range(len(table[0])):
             f.write(table[0][i]+" "+str(table[1][i])+" "+str(len(str(table[0][i])))+"\n")
         f.close()
+    def WriteTableToFileFlipped(self, fileName):
+        table = self.GetTable()
+        f = open(fileName, "w")
+        for i in range(len(table[0])):
+            f.write(table[0][i][::-1]+" "+str(table[1][i])+" "+str(len(str(table[0][i])))+"\n")
+        f.close()
     
 if __name__ == "__main__":
     le = [0, 2, 2, 3, 1, 1, 1, 0, 0, 0]

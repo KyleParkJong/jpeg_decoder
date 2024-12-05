@@ -297,19 +297,31 @@ of = open(fileName, "w")
 of.write(bitStream)
 of.close()
 print("Recovered bitstream output to file: "+fileName)
+#Write bitsream flipped to file
+fileName2 = outFolder+"/bitStreamFlipped.txt"
+off = open(fileName2, "w")
+for line in bitStream.split("\n"):
+    line = line[::-1]
+    off.write(line+"\n")
+off.close()
+print("Recovered bitstream flipped output to file: "+fileName2)
 #Write DC huffman tables to files
 for i in range(len(huffSizeTables[0])):
     hf = huffman.HuffmanTable()
     hf.GetHuffmanBits(huffSizeTables[0][i], huffValTables[0][i])
     fileName = outFolder+"/"+"DC_HuffTable_Index"+str(i)+".txt"
+    fileNameFlipped = outFolder+"/"+"DC_HuffTable_Index"+str(i)+"Flipped.txt"
     hf.WriteTableToFile(fileName)
+    hf.WriteTableToFileFlipped(fileNameFlipped)
     print("Recovered Huffman Table output to file: "+fileName)
 #Write AC huffman tables to files
 for i in range(len(huffSizeTables[1])):
     hf = huffman.HuffmanTable()
     hf.GetHuffmanBits(huffSizeTables[1][i], huffValTables[1][i])
     fileName = outFolder+"/"+"AC_HuffTable_Index"+str(i)+".txt"
+    fileNameFlipped = outFolder+"/"+"AC_HuffTable_Index"+str(i)+"Flipped.txt"
     hf.WriteTableToFile(fileName)
+    hf.WriteTableToFileFlipped(fileNameFlipped)
     print("Recovered Huffman Table output to file: "+fileName)
 #Write Quantization tables to files
 for i in range(len(quantTables)):
