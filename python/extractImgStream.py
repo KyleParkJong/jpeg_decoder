@@ -4,8 +4,8 @@ import functions
 from pathlib import Path
 
 ######## USER - ENTER I/O FILE NAMES ###########
-imgName = "../images/cat_august.jpg" #"charcoal_cat.jpg"#
-outFolder = "cat_august"
+imgName = "../images/tinyWide.jpg" #"charcoal_cat.jpg"#
+outFolder = "tinyWide"
 ######## USER - CONFIGURE PARAMETERS ###########
 outType = "bin32" #Options: "binary" = one long string, "bin32" = lines of 32 bits, "hex" = lines of 32 hex
 ################################################
@@ -314,6 +314,7 @@ for i in range(len(huffSizeTables[0])):
     hf.WriteTableToFile(fileName)
     hf.WriteTableToFileFlipped(fileNameFlipped)
     print("Recovered Huffman Table output to file: "+fileName)
+    print("Recovered Flipped Huffman Table output to file: "+fileNameFlipped)
 #Write AC huffman tables to files
 for i in range(len(huffSizeTables[1])):
     hf = huffman.HuffmanTable()
@@ -323,6 +324,7 @@ for i in range(len(huffSizeTables[1])):
     hf.WriteTableToFile(fileName)
     hf.WriteTableToFileFlipped(fileNameFlipped)
     print("Recovered Huffman Table output to file: "+fileName)
+    print("Recovered Flipped Huffman Table output to file: "+fileNameFlipped)
 #Write Quantization tables to files
 for i in range(len(quantTables)):
     fileName = outFolder+"/"+"QuantTable"+str(i)+".txt"
@@ -338,3 +340,4 @@ of = open(fileName, "w")
 of.write(str(imgDimensions[0])+","+str(imgDimensions[1])+"\n")
 print("Recovered Header Info output to file: "+fileName)
 of.close()
+
