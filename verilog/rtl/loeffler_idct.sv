@@ -488,10 +488,6 @@ module loeffler_idct_stage_8 #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH)
     output logic valid_out
 );
 
-    // We need to normalize the output by multiplying by the
-    // square root of 8. This uses fixed point representation (64,14)
-    localparam NORMALIZATION_FACTOR = 5793;
-
     logic signed [OUTPUT_WIDTH-1:0] y_out_result [7:0];
 
     always_comb begin
@@ -516,7 +512,7 @@ module loeffler_idct_stage_8 #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH)
         else begin
             valid_out <= valid_in;
             if(valid_in) begin
-                for(int i = 0; i < 8; i++) y_out[i] <= y_out_result[i] * NORMALIZATION_FACTOR;
+                for(int i = 0; i < 8; i++) y_out[i] <= y_out_result[i];
             end
         end
     end

@@ -7,7 +7,7 @@ logic valid_out;
 
 logic signed [11:0] idct_in     [7:0][7:0];
 logic signed [11:0] idct_in_mem [7:0][7:0];
-logic signed [7:0]  idct_out    [7:0][7:0];
+logic signed [8:0]  idct_out    [7:0][7:0];
 
 initial begin
     $readmemh("./idct_input_block.mem", idct_in_mem);

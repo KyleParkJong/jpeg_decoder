@@ -2,15 +2,35 @@
 clear;
 
 %% Comparing Matlab's DCT/IDCT vs Loeffler's DCT/IDCT implementation
-test_data = [50; 60; 70; 80; 90; 100; 110; 120];
+%test_data = [255  255  255  255  0  0  0  0];
+test_data = [50 60 70 80 90 100 110 120];
+
+idct_2d_test_data = [
+                    11 12 13 14 15 16 17 18;
+                    21 22 23 24 25 26 27 28;
+                    31 32 33 34 35 36 37 38;
+                    41 42 43 44 45 46 47 48;
+                    51 52 53 54 55 56 57 58;
+                    61 62 63 64 65 66 67 68;
+                    71 72 73 74 75 76 77 78;
+                    81 82 83 84 85 86 87 88;
+                    ];
+
+% Write file to be used with 2D IDCT Testbench
+fileID = fopen('idct_input_block.mem','w');
+fprintf(fileID,'%02x %02x %02x %02x %02x %02x %02x %02x\n', idct_2d_test_data.');
+fclose(fileID);
 
 % Matlab
 matlab_dct  = dct(test_data);
 matlab_idct = idct(test_data);
 
 % Loeffler's implementation (must normalize to match matlab output)
-improved_loeffler_dct = loefflersDCT(test_data)/sqrt(8);
-improved_loeffler_idct = loefflersIDCT(test_data)/sqrt(8);
+%improved_loeffler_dct = loefflersDCT(test_data)/sqrt(8);
+%improved_loeffler_idct = loefflersIDCT(test_data)/sqrt(8);
+
+idct2d_test_result = loefflersIDCT_2D(idct_2d_test_data); 
+idct2d_test_result_fixed = fix(loefflersIDCT_2D_fixed(idct_2d_test_data));
 
 %% Loeffler's Original DCT (Works correctly)
 function dct_out = loefflerDCT(dct_in)
@@ -388,7 +408,7 @@ function idct_out = loefflersIDCT(idct_in_reversed)
     idct_out = stage8_out;
 end
 
-%% Loeffler's 2D DCT (Not working correctly due to the 1D)
+%% Loeffler's 2D DCT 
 function dct_out = loefflersDCT_2D(dct_in)
 
     row_dct = zeros(8,8);
@@ -409,6 +429,8 @@ function dct_out = loefflersDCT_2D(dct_in)
     for row=1:size(transposed_matrix,1)
         dct_out(row,:) = loefflersDCT(transposed_matrix(row,:));
     end
+
+    dct_out = transpose(dct_out)/8;
 end
 
 %% Loeffler's 2D IDCT (Works correctly)
@@ -432,38 +454,341 @@ function idct_out = loefflersIDCT_2D(idct_in)
     for row=1:size(transposed_matrix,1)
         idct_out(row,:) = loefflersIDCT(transposed_matrix(row,:));
     end
+
+    idct_out = transpose(idct_out)/8;
 end
+
+%% Improved Loeffler's DCT (Works correctly)
+function dct_out = loefflersDCT_fixed(dct_in)
+
+    % Stage 1 % Checked
+    stage1_out = zeros(8,1);
+
+    stage1_out(1) = dct_in(1) + dct_in(8);
+    stage1_out(2) = dct_in(2) + dct_in(7);
+    stage1_out(3) = dct_in(3) + dct_in(6);
+    stage1_out(4) = dct_in(4) + dct_in(5);
+    stage1_out(5) = dct_in(4) - dct_in(5);
+    stage1_out(6) = dct_in(3) - dct_in(6);
+    stage1_out(7) = dct_in(2) - dct_in(7);
+    stage1_out(8) = dct_in(1) - dct_in(8);
+
+    % Stage 2 % Checked
+    stage2_out = zeros(10,1);
+
+    stage2_out(1)  = stage1_out(1) + stage1_out(4);
+    stage2_out(2)  = stage1_out(2) + stage1_out(3);
+    stage2_out(3)  = stage1_out(2) - stage1_out(3);
+    stage2_out(4)  = stage1_out(1) - stage1_out(4);
+    stage2_out(5)  = stage1_out(8) * (-71);
+    stage2_out(6)  = stage1_out(7);
+    stage2_out(7)  = stage1_out(6);
+    stage2_out(8)  = stage1_out(5) * (355);
+    stage2_out(9)  = stage1_out(5) + stage1_out(8);
+    stage2_out(10) = stage1_out(6) + stage1_out(7);
+
+    % Stage 3 % Checked
+    stage3_out = zeros(10,1);
+
+    stage3_out(1)  = stage2_out(1) + stage2_out(2);
+    stage3_out(2)  = stage2_out(1) - stage2_out(2);
+    stage3_out(3)  = stage2_out(3);
+    stage3_out(4)  = stage2_out(4);
+    stage3_out(5)  = stage2_out(5);
+    stage3_out(6)  = stage2_out(6);
+    stage3_out(7)  = stage2_out(7);
+    stage3_out(8)  = stage2_out(8);
+    stage3_out(9)  = stage2_out(9)  * (213);
+    stage3_out(10) = stage2_out(10) * (251);
+
+    % Stage 4 % Checked
+    stage4_out = zeros(10,1);
+
+    stage4_out(1)  = stage3_out(1);
+    stage4_out(2)  = stage3_out(2);
+    stage4_out(3)  = stage3_out(3);
+    stage4_out(4)  = stage3_out(4);
+    stage4_out(5)  = stage3_out(5);
+    stage4_out(6)  = stage3_out(6) * (-201);
+    stage4_out(7)  = stage3_out(7) * (301);
+    stage4_out(8)  = stage3_out(8);
+    stage4_out(9)  = stage3_out(9);
+    stage4_out(10) = stage3_out(10);
+
+    % Stage 5 % Checked
+    stage5_out = zeros(9,1);
+
+    stage5_out(1) = stage4_out(1);
+    stage5_out(2) = stage4_out(2);
+    stage5_out(3) = stage4_out(4);
+    stage5_out(4) = stage4_out(3);
+    stage5_out(5) = stage4_out(9) + stage4_out(5);
+    stage5_out(6) = stage4_out(10) + stage4_out(6);
+    stage5_out(7) = stage4_out(10) - stage4_out(7);
+    stage5_out(8) = stage4_out(9) - stage4_out(8);
+    stage5_out(9) = stage4_out(3) + stage4_out(4);
+
+    % Stage 6 % Checked
+    stage6_out = zeros(9,1);
+
+    stage6_out(1) = stage5_out(1);
+    stage6_out(2) = stage5_out(2);
+    stage6_out(3) = stage5_out(3);
+    stage6_out(4) = stage5_out(4);
+    stage6_out(5) = stage5_out(5) + stage5_out(7);
+    stage6_out(6) = stage5_out(8) - stage5_out(6);
+    stage6_out(7) = stage5_out(5) - stage5_out(7);
+    stage6_out(8) = stage5_out(8) + stage5_out(6);
+    stage6_out(9) = stage5_out(9) * (139);
+
+    % Stage 7 % Checked
+    stage7_out = zeros(9,1);
+
+    stage7_out(1) = stage6_out(1);
+    stage7_out(2) = stage6_out(2);
+    stage7_out(3) = stage6_out(3) * (196);
+    stage7_out(4) = stage6_out(4) * (473);
+    stage7_out(5) = stage6_out(8) - stage6_out(5);
+    stage7_out(6) = stage6_out(6);
+    stage7_out(7) = stage6_out(7);
+    stage7_out(8) = stage6_out(8) + stage6_out(5);
+    stage7_out(9) = stage6_out(9);
+
+    % Stage 8 % Checked
+    % Outputs are assign in reverse bit order
+    stage8_out = zeros(8,1);
+
+    stage8_out(1) = stage7_out(1);
+    stage8_out(5) = stage7_out(2);
+    stage8_out(3) = fix((stage7_out(9) + stage7_out(3)) * 2^(-8));
+    stage8_out(7) = fix((stage7_out(9) - stage7_out(4)) * 2^(-8));
+    stage8_out(8) = fix(stage7_out(5) * 2^(-8));
+    stage8_out(4) = fix((stage7_out(6) * (362)) * 2^(-16));
+    stage8_out(6) = fix((stage7_out(7) * (362)) * 2^(-16));
+    stage8_out(2) = fix(stage7_out(8) * 2^(-8));
+
+    dct_out = stage8_out;
+
+end
+
+%% Loeffler's 2D DCT 
+function dct_out = loefflersDCT_2D_fixed(dct_in)
+
+    row_dct = zeros(8,8);
+    dct_out = zeros(8,8);
+
+    % DCT of the row
+    for row=1:size(dct_in,1)
+        row_dct(row,:) = loefflersDCT_fixed(dct_in(row,:));
+    end
+
+    % Tranpose
+    transposed_matrix = transpose(row_dct);
+
+    % In the transpose matrix, the rows contain
+    % the values of each column. Compute the DCT
+    % of the columns by computing the DCT of each row
+    % of the transposed matrix
+    for row=1:size(transposed_matrix,1)
+        dct_out(row,:) = loefflersDCT_fixed(transposed_matrix(row,:));
+    end
+
+    dct_out = transpose(dct_out)/8;
+end
+
+%% Improved Loeffler's IDCT (Works correctly)
+function idct_out = loefflersIDCT_fixed(idct_in_reversed)
+
+    % Undoing the bit-reverse order of the input
+    idct_in = zeros(1,8);
+
+    idct_in(1) = idct_in_reversed(1);
+    idct_in(2) = idct_in_reversed(5);
+    idct_in(3) = idct_in_reversed(3);
+    idct_in(4) = idct_in_reversed(7);
+    idct_in(5) = idct_in_reversed(8);
+    idct_in(6) = idct_in_reversed(4);
+    idct_in(7) = idct_in_reversed(6);
+    idct_in(8) = idct_in_reversed(2);
+
+    % Stage 1 Checked
+    stage1_out = zeros(8,1);
+
+    stage1_out(1) = idct_in(1);
+    stage1_out(2) = idct_in(2);
+    stage1_out(3) = idct_in(3);
+    stage1_out(4) = idct_in(4);
+    stage1_out(5) = idct_in(5);
+    stage1_out(6) = idct_in(6) * (362);
+    stage1_out(7) = idct_in(7) * (362);
+    stage1_out(8) = idct_in(8);
+
+    % Stage 2 Checked
+    stage2_out = zeros(9,1);
+
+    stage2_out(1)  = stage1_out(1);
+    stage2_out(2)  = stage1_out(2);
+    stage2_out(3)  = stage1_out(4) * (473);
+    stage2_out(4)  = stage1_out(3) * (196);
+    stage2_out(5)  = (stage1_out(8) - stage1_out(5)) * 2^(8);
+    stage2_out(6)  = stage1_out(6);
+    stage2_out(7)  = stage1_out(7);
+    stage2_out(8)  = (stage1_out(8) + stage1_out(5)) * 2^(8);
+    stage2_out(9)  = stage1_out(3) + stage1_out(4);
+
+    % Stage 3 Checked
+    stage3_out = zeros(9,1);
+
+    stage3_out(1)  = stage2_out(1);
+    stage3_out(2)  = stage2_out(2);
+    stage3_out(3)  = stage2_out(3);
+    stage3_out(4)  = stage2_out(4);
+    stage3_out(5)  = stage2_out(5) + stage2_out(7);
+    stage3_out(6)  = stage2_out(8) - stage2_out(6);
+    stage3_out(7)  = stage2_out(5) - stage2_out(7);
+    stage3_out(8)  = stage2_out(8) + stage2_out(6);
+    stage3_out(9)  = stage2_out(9)  * (139);
+
+    % Stage 4 Checked
+    stage4_out = zeros(9,1);
+
+    stage4_out(1)  = stage3_out(1);
+    stage4_out(2)  = stage3_out(2);
+    stage4_out(3)  = stage3_out(9) - stage3_out(3);
+    stage4_out(4)  = stage3_out(9) + stage3_out(4);
+    stage4_out(5)  = stage3_out(8) * (355);
+    stage4_out(6)  = stage3_out(6);
+    stage4_out(7)  = stage3_out(7);
+    stage4_out(8)  = stage3_out(5) * (-71);
+    stage4_out(9)  = stage3_out(5) + stage3_out(8);
+
+    % Stage 5 Checked
+    stage5_out = zeros(10,1);
+
+    stage5_out(1)  = stage4_out(1);
+    stage5_out(2)  = stage4_out(2);
+    stage5_out(3)  = stage4_out(3);
+    stage5_out(4)  = stage4_out(4);
+    stage5_out(5)  = stage4_out(5);
+    stage5_out(6)  = stage4_out(7) * (301);
+    stage5_out(7)  = stage4_out(6) * (-201);
+    stage5_out(8)  = stage4_out(8);
+    stage5_out(9)  = stage4_out(9);
+    stage5_out(10) = stage4_out(6) + stage4_out(7);
+
+    % Stage 6 Checked
+    stage6_out = zeros(10,1);
+
+    stage6_out(1)  = stage5_out(1) + stage5_out(2);
+    stage6_out(2)  = stage5_out(1) - stage5_out(2);
+    stage6_out(3)  = fix(stage5_out(3) * 2^(-8));
+    stage6_out(4)  = fix(stage5_out(4) * 2^(-8));
+    stage6_out(5)  = stage5_out(5);
+    stage6_out(6)  = stage5_out(6);
+    stage6_out(7)  = stage5_out(7);
+    stage6_out(8)  = stage5_out(8);
+    stage6_out(9)  = stage5_out(9) * (213);
+    stage6_out(10) = stage5_out(10) * (251);
+
+    % Stage 7 Checked
+    stage7_out = zeros(8,1);
+
+    stage7_out(1) = stage6_out(1) + stage6_out(4);
+    stage7_out(2) = stage6_out(2) + stage6_out(3);
+    stage7_out(3) = stage6_out(2) - stage6_out(3);
+    stage7_out(4) = stage6_out(1) - stage6_out(4);
+    stage7_out(5) = fix((stage6_out(9) - stage6_out(5)) * 2^(-16));
+    stage7_out(6) = fix((stage6_out(10) - stage6_out(6)) * 2^(-16));
+    stage7_out(7) = fix((stage6_out(10) + stage6_out(7)) * 2^(-16));
+    stage7_out(8) = fix((stage6_out(9) + stage6_out(8)) * 2^(-16));
+
+    % Stage 8 Checked
+    stage8_out = zeros(8,1);
+
+    stage8_out(1) = stage7_out(1) + stage7_out(8);
+    stage8_out(2) = stage7_out(2) + stage7_out(7);
+    stage8_out(3) = stage7_out(3) + stage7_out(6);
+    stage8_out(4) = stage7_out(4) + stage7_out(5);
+    stage8_out(5) = stage7_out(4) - stage7_out(5);
+    stage8_out(6) = stage7_out(3) - stage7_out(6);
+    stage8_out(7) = stage7_out(2) - stage7_out(7);
+    stage8_out(8) = stage7_out(1) - stage7_out(8);
+
+    idct_out = stage8_out;
+end
+
+%% Loeffler's 2D IDCT Fixed
+function idct_out = loefflersIDCT_2D_fixed(idct_in)
+
+    row_idct = zeros(8,8);
+    idct_out = zeros(8,8);
+
+    % DCT of the row
+    for row=1:size(idct_in,1)
+        row_idct(row,:) = loefflersIDCT_fixed(idct_in(row,:));
+    end
+
+    % Tranpose
+    transposed_matrix = transpose(row_idct);
+
+    % In the transpose matrix, the rows contain
+    % the values of each column. Compute the DCT
+    % of the columns by computing the DCT of each row
+    % of the transposed matrix
+    for row=1:size(transposed_matrix,1)
+        idct_out(row,:) = loefflersIDCT_fixed(transposed_matrix(row,:));
+    end
+
+    idct_out = transpose(idct_out)/8;
+end
+
+
+
+
+
 
 %% Testing Loeffler's DCT/IDCT with actual data
 
+% STEP 1: Color transforamtion %
+% RGB -> YCbCr
+rgbImage = imread('my_cat.png');
+
+% Transformation matrix
+tform = [65.481/255, 128.553/255, 24.966/255;
+            -37.797/255, -74.203/255, 112/255;
+            112/255, -93.786/255 -18.214/255];
+
+% Separate the R, G, and B channels
+R = double(rgbImage(:,:,1));
+G = double(rgbImage(:,:,2));
+B = double(rgbImage(:,:,3));
+
+% Calculate Y, Cb, Cr components
+Y  = tform(1,1) * R + tform(1,2) * G + tform(1,3) * B + 16;
+Cb = tform(2,1) * R + tform(2,2) * G + tform(2,3) * B + 128;
+Cr = tform(3,1) * R + tform(3,2) * G + tform(3,3) * B + 128;
+
+%Chroma subsampling
+Cb_subsampled = Cb(:, 1:2:end);
+Cr_subsampled = Cr(:, 1:2:end);
+
+Cb_tmp = zeros(size(double(Cb))); 
+Cr_tmp = zeros(size(double(Cr)));
+
+Cb_tmp(:, 1:2:end) = Cb_subsampled; 
+Cb_tmp(:, 2:2:end) = Cb_subsampled;
+Cr_tmp(:, 1:2:end) = Cr_subsampled; 
+Cr_tmp(:, 2:2:end) = Cr_subsampled;
+
+%DCT
 N=8;
 n=0:N-1;
 k=0:N-1;
 k=k.';
 t=k*(pi()/N*(n+.5));
-dct = cos(t);
-% dct = zeros(N);
-% i = cos(pi()/N*(n+.5)*k);
-%plot(cos(t))
+%dct = cos(t);
 
-A=imread('my_cat.png');
-A=mean(A,3);
-B=filter2([.3,.3,.3;.3,.3,.3;.3,.3,.3],A);
-C=A(1:3:end,1:3:end);
-C2=B(1:3:end,1:3:end);
-D=filter2([.3,.3,.3;.3,.3,.3;.3,.3,.3],C2);
-E=D(1:3:end,1:3:end);
-F=E(10:10+31,5:5+31);
-F=F/max(max(F))*255;
-% figure(1)
-% imshow(F,[])
-F=A;
-imsize=size(F);
-cols=imsize(2);
-rows=imsize(1);
-
-F=A(1:floor(rows/8)*8,1:floor(cols/8)*8);
-
+%quantization table
 qtable=[16 11 10 16 24 40 51 61;
         12 12 14 19 26 58 60 55;
         14 13 16 24 40 57 69 56;
@@ -473,75 +798,113 @@ qtable=[16 11 10 16 24 40 51 61;
         49 64 78 87 103 121 120 101;
         72 92 95 98 112 100 103 99;
         ];
-filter=[1 1 1 1 1 1 1 1;
-        1 1 1 1 1 1 1 1;
-        1 1 1 1 1 1 1 1;
-        1 1 1 1 1 1 1 1;
-        1 1 1 1 1 1 1 1;
-        1 1 1 1 1 1 1 1;
-        1 1 1 1 1 1 1 1;
-        1 1 1 1 1 1 1 1;
-        ];
-X=ones(32);
-X_1=ones(32);
+%Need other tables for cb and cr
+
+%Luma DCT
+rows=size(Y,1);
+cols=size(Y,2);
+Y_dct=ones(rows,cols);
 for i = 1:N:rows
     for j = 1:N:cols
-        %X(i:i+N-1,j:j+N-1)=dct*F(i:i+N-1,j:j+N-1)*dct.';
-        X(i:i+N-1,j:j+N-1) = loefflersDCT_2D(F(i:i+N-1,j:j+N-1));
-    end
-end
-Q=ones(32);
-Q_1=ones(32);
-for i = 1:N:rows
-    for j = 1:N:cols
-        %Q(i:i+N-1,j:j+N-1)=round(X(i:i+N-1,j:j+N-1)./qtable);
-        Q(i:i+N-1,j:j+N-1)=round(X(i:i+N-1,j:j+N-1)./qtable);
-    end
-end
-q=ones(32);
-for i = 1:N:rows
-    for j = 1:N:cols
-        %q(i:i+N-1,j:j+N-1)=inv(dct)*(Q(i:i+N-1,j:j+N-1).*qtable.*filter)*inv(dct.');
-        q(i:i+N-1,j:j+N-1) = loefflersIDCT_2D(Q(i:i+N-1,j:j+N-1).*qtable.*filter);
+        Y_dct(i:i+N-1,j:j+N-1)=round(loefflersDCT_2D_fixed(Y(i:i+N-1,j:j+N-1))./qtable);
     end
 end
 
+%R Chroma DCT
+rows=size(Cr_subsampled,1);
+cols=size(Cr_subsampled,2);
+CR_dct=ones(rows,cols);
+for i = 1:N:rows
+    for j = 1:N:cols
+        CR_dct(i:i+N-1,j:j+N-1)=round(loefflersDCT_2D_fixed(Cr_subsampled(i:i+N-1,j:j+N-1))./qtable);
+    end
+end
 
-%X=dct*F*dct.';
-%Q=round(X./qtable);
+%B Chroma DCT
+rows=size(Cb_subsampled,1);
+cols=size(Cb_subsampled,2);
+CB_dct=ones(rows,cols);
+for i = 1:N:rows
+    for j = 1:N:cols
+        CB_dct(i:i+N-1,j:j+N-1)=round(loefflersDCT_2D_fixed(Cb_subsampled(i:i+N-1,j:j+N-1))./qtable);
+    end
+end
 
-% figure(4)
-% imshow(X,[])
-% figure(5)
-% imshow(Q,[])
-% figure(6)
-% imshow(q,[])
-subplot(1,3,1)
-imshow(F,[])
-subplot(1,3,2)
-imshow(Q,[])
-subplot(1,3,3)
-imshow(q,[])
-%subplot(1,4,4)
-%imshow(q,[])
-err=F-q;
-% subplot(1,4,4)
-% imshow(F-q,[])
-%imshow(inv(dct)*(Q*100)*inv(dct.'),[]);
-
-
-% i = 1:N;
-% x=cos(i*2*pi()/20);
-% X=dct*x.';
-% figure(1)
-% plot(x)
-% hold
-% plot(inv(dct)*X);
-% figure(2)
-% plot(X)
-
-q_uint8 = uint8((q - min(q(:))) / (max(q(:)) - min(q(:))) * 255);
-f_uint8 = uint8(F);
-[peaksnr, snr] = psnr(q_uint8,f_uint8); 
+%Entropy Encoding
 
 
+
+
+
+%%%%%%% Decode %%%%%%%%%%
+
+%IDCT
+%Luma
+rows=size(Y_dct,1);
+cols=size(Y_dct,2);
+y_inv=ones(rows,cols);
+for i = 1:N:rows
+    for j = 1:N:cols
+        y_inv(i:i+N-1,j:j+N-1)=loefflersIDCT_2D_fixed(Y_dct(i:i+N-1,j:j+N-1).*qtable);
+    end
+end
+%R chroma IDCT
+rows=size(CR_dct,1);
+cols=size(CR_dct,2);
+cr_inv=ones(rows,cols);
+for i = 1:N:rows
+    for j = 1:N:cols
+        cr_inv(i:i+N-1,j:j+N-1)=loefflersIDCT_2D_fixed(CR_dct(i:i+N-1,j:j+N-1).*qtable);
+    end
+end
+%B chroma IDCT
+rows=size(CB_dct,1);
+cols=size(CB_dct,2);
+cb_inv=ones(rows,cols);
+for i = 1:N:rows
+    for j = 1:N:cols
+        cb_inv(i:i+N-1,j:j+N-1)=loefflersIDCT_2D_fixed(CB_dct(i:i+N-1,j:j+N-1).*qtable);
+    end
+end
+
+%Up-sample Cr & CB
+Cb_up = zeros(size(double(y_inv))); 
+Cr_up = zeros(size(double(y_inv)));
+
+Cb_up(:, 1:2:end) = cb_inv; 
+Cb_up(:, 2:2:end) = cb_inv;
+Cr_up(:, 1:2:end) = cr_inv; 
+Cr_up(:, 2:2:end) = cr_inv;
+
+ycrcbImg = uint8(cat(3, y_inv, Cb_up, Cr_up));
+%imshow(ycrcbImg,[])
+
+tform_inv = [255/219, 0, 255/224*1.402;
+             255/219, -255/224*1.772*0.114/0.587, -255/224*1.402*0.299/0.587;   
+             255/219, 255/224*1.772, 0];
+
+% R = tform_inv(1,1) * y_inv + tform_inv(1,2) * Cb_up + tform_inv(1,3) * Cr_up - 222.921;
+% G = tform_inv(2,1) * y_inv + tform_inv(2,2) * Cb_up + tform_inv(2,3) * Cr_up + 135.576;
+% B = tform_inv(3,1) * y_inv + tform_inv(3,2) * Cb_up + tform_inv(3,3) * Cr_up - 276.836;
+
+R = tform_inv(1,1) * (y_inv-16) + tform_inv(1,2) * (Cb_up-128) + tform_inv(1,3) * (Cr_up-128);
+G = tform_inv(2,1) * (y_inv-16) + tform_inv(2,2) * (Cb_up-128) + tform_inv(2,3) * (Cr_up-128);
+B = tform_inv(3,1) * (y_inv-16) + tform_inv(3,2) * (Cb_up-128) + tform_inv(3,3) * (Cr_up-128);
+
+
+finalImg = uint8(cat(3,R, G, B));
+tmp = finalImg - rgbImage;
+tmp1 = tmp(:,:,1); 
+tmp2 = tmp(:,:,2);
+tmp3 = tmp(:,:,3);
+figure(1)
+subplot(1,2,1)
+imshow(rgbImage,[])
+title("Input Image")
+subplot(1,2,2)
+imshow(finalImg,[])
+title("Reconstructed Image")
+
+finalImg_uint8 = uint8((finalImg - min(finalImg(:))) / (max(finalImg(:)) - min(finalImg(:))) * 255);
+rgbImage_uint8 = uint8(rgbImage);
+[peaksnr, snr] = psnr(finalImg_uint8,rgbImage);
