@@ -1,6 +1,6 @@
 VCS = vcs -kdb -sverilog -debug_access+all+reverse
 
-TB = supersample_buffer_tb.sv
+TB = top_tb.sv
 TB_LIBS = displays.sv
 
 RTL = unzigzag.sv huffman_decoder.sv vli_decoder.sv input_buffer.sv block_buffer.sv entropy_decoding.sv diff_decoder.sv deQuant.sv top.sv loeffler_idct.sv loeffler2d_idct.sv supersample_4x4.sv supersample_8x8.sv supersample_top.sv supersample_buffer_top.sv channel_buffer_copy.sv
