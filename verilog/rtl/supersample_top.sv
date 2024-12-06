@@ -28,7 +28,7 @@ logic [3:0] valid;
 logic [3:0] sup_valid;
 logic [$clog2(`CH+1)-1:0] ch;
 
-always_ff @(posedge clk, posedge rst) begin
+always_ff @(posedge clk) begin
     if (rst) begin
         for (int i = 0; i < 8; i = i + 1) begin
             for (int j = 0; j < 8; j = j + 1) begin
