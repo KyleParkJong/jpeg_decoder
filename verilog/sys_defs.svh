@@ -43,4 +43,8 @@ typedef struct {
     logic [$clog2(`QN+1)-1:0] map [`CH-1:0]; // Maps channel to quantization table number
 } QUANT_PACKET;
 
+typedef struct {
+    logic [`Q-1:0] block [7:0][7:0];
+} BLOCK;
+
 `endif

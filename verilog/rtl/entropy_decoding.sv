@@ -23,7 +23,7 @@ logic signed [`BLOCK_BUFF_SIZE-1:0][11:0] line; // Output in line form
 // logic freq, freq_n; // Frequency of current block: 0 for DC, 1 for AC
 logic freq;
 logic clear_n;
-logic [$clog2(`CH+1)-1:0] ch;// combinational
+logic [$clog2(`CH+1)-1:0] ch; // (combinational)
 
 
 input_buffer ibuff (
