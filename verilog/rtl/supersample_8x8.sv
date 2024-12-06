@@ -3,18 +3,18 @@
 module supersample_8x8 (
     input  logic [$clog2(`CH+1)-1:0] ch,      // Cb: 2'b01, Cr: 2'b10
     input  logic valid_in,
-    input  logic [8:0] block_in [7:0][7:0],       // input: 4x4 block
-    output logic [8:0] block_1_out [7:0][7:0],     // output: 8x8 block
-    output logic [8:0] block_2_out [7:0][7:0],
-    output logic [8:0] block_3_out [7:0][7:0],
-    output logic [8:0] block_4_out [7:0][7:0],
+    input  logic [7:0] block_in [7:0][7:0],       // input: 4x4 block
+    output logic [7:0] block_1_out [7:0][7:0],     // output: 8x8 block
+    output logic [7:0] block_2_out [7:0][7:0],
+    output logic [7:0] block_3_out [7:0][7:0],
+    output logic [7:0] block_4_out [7:0][7:0],
     output logic [3:0] valid_out
 );
 
-    logic [8:0] block_1 [3:0][3:0];
-    logic [8:0] block_2 [3:0][3:0];
-    logic [8:0] block_3 [3:0][3:0];
-    logic [8:0] block_4 [3:0][3:0];
+    logic [7:0] block_1 [3:0][3:0];
+    logic [7:0] block_2 [3:0][3:0];
+    logic [7:0] block_3 [3:0][3:0];
+    logic [7:0] block_4 [3:0][3:0];
 
     logic valid_1_out, valid_2_out, valid_3_out, valid_4_out;
 

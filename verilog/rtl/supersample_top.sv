@@ -5,24 +5,24 @@ module supersample_top (
     input  logic rst,
     input  logic valid_in,
     input  logic [$clog2(`CH+1)-1:0] ch_in,     // 0=Y, 1=Cb, 2=Cr
-    input  logic [8:0] block_in [7:0][7:0],
-    output logic [8:0] block_1_out [7:0][7:0],
-    output logic [8:0] block_2_out [7:0][7:0],
-    output logic [8:0] block_3_out [7:0][7:0],
-    output logic [8:0] block_4_out [7:0][7:0],
+    input  logic [7:0] block_in [7:0][7:0],
+    output logic [7:0] block_1_out [7:0][7:0],
+    output logic [7:0] block_2_out [7:0][7:0],
+    output logic [7:0] block_3_out [7:0][7:0],
+    output logic [7:0] block_4_out [7:0][7:0],
     output logic [$clog2(`CH+1)-1:0] ch_out,
     output logic [3:0] valid_out
 );
 
-logic [8:0] block_1 [7:0][7:0];
-logic [8:0] block_2 [7:0][7:0];
-logic [8:0] block_3 [7:0][7:0];
-logic [8:0] block_4 [7:0][7:0];
+logic [7:0] block_1 [7:0][7:0];
+logic [7:0] block_2 [7:0][7:0];
+logic [7:0] block_3 [7:0][7:0];
+logic [7:0] block_4 [7:0][7:0];
 
-logic [8:0] sup_block_1 [7:0][7:0];
-logic [8:0] sup_block_2 [7:0][7:0];
-logic [8:0] sup_block_3 [7:0][7:0];
-logic [8:0] sup_block_4 [7:0][7:0];
+logic [7:0] sup_block_1 [7:0][7:0];
+logic [7:0] sup_block_2 [7:0][7:0];
+logic [7:0] sup_block_3 [7:0][7:0];
+logic [7:0] sup_block_4 [7:0][7:0];
 
 logic [3:0] valid;
 logic [3:0] sup_valid;

@@ -46,7 +46,7 @@ always_comb begin
         0: begin
             for (int r = 0; r < 8; ++r) begin
                 for (int c = 0; c < 8; ++c) begin
-                    y_buff_n[tail].block[r][c] = blocks_in[0][r][c];
+                    y_buff_n[tail].block[r][c] = blocks_in[3][r][c];
                 end
             end
             tail_n = tail + 1;
