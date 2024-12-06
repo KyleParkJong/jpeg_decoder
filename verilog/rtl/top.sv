@@ -9,12 +9,10 @@ module top (
     input QUANT_PACKET qp,
     //Outputs
     output logic request,
-    //Temporary
-    output logic [`Q-1:0] y_out [7:0][7:0],
-    output logic [`Q-1:0] cb_out [7:0][7:0],
-    output logic [`Q-1:0] cr_out [7:0][7:0],
-    output logic valid_out_Buffer
-    //Final: output [7:0] rbgOut [7:0][7:0][`CH-1:0] 
+    output logic unsigned [7:0] r [7:0][7:0],
+    output logic unsigned [7:0] g [7:0][7:0],
+    output logic unsigned [7:0] b [7:0][7:0],
+    output logic valid_out_Color
 );
 
 //Internal connections
@@ -87,10 +85,10 @@ supersample_top supersampling (
     .valid_out(valid_out_Super)   // 4 bits
 );
 
-// logic [`Q-1:0] y_out [7:0][7:0];
-// logic [`Q-1:0] cb_out [7:0][7:0];
-// logic [`Q-1:0] cr_out [7:0][7:0];
-// logic valid_out_Buffer;
+logic [`Q-1:0] y_out [7:0][7:0];
+logic [`Q-1:0] cb_out [7:0][7:0];
+logic [`Q-1:0] cr_out [7:0][7:0];
+logic valid_out_Buffer;
 
 channel_buffer_copy buffer (
     //in
@@ -105,6 +103,26 @@ channel_buffer_copy buffer (
     .cr_out(cr_out),
     .valid_out(valid_out_Buffer)
 );
+
+ycbcr2rgb_block color_conversion (
+    //in
+    .clk(clk),
+    .rst(rst),
+    .valid_in(valid_out_Buffer),
+    .y(y_out),
+    .cb(cb_out),
+    .cr(cr_out),
+    //out
+    .r(r),
+    .g(g),
+    .b(b),
+    .valid_out(valid_out_Color)
+);
+
+// assign r = y_out;
+// assign g = cb_out;
+// assign b = cr_out;
+// assign valid_out_Color = valid_out_Buffer;
 
 
 endmodule

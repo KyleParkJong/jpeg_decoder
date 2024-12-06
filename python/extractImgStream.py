@@ -2,10 +2,12 @@ import struct
 import huffman
 import functions
 from pathlib import Path
+import sys
 
 ######## USER - ENTER I/O FILE NAMES ###########
-imgName = "../images/tinyWide.jpg" #"charcoal_cat.jpg"#
-outFolder = "tinyWide"
+imageName = sys.argv[1]
+imgName = "../images/"+imageName+".jpg" #"charcoal_cat.jpg"#
+outFolder = imageName #"colorBarsSmall"
 ######## USER - CONFIGURE PARAMETERS ###########
 outType = "bin32" #Options: "binary" = one long string, "bin32" = lines of 32 bits, "hex" = lines of 32 hex
 ################################################
