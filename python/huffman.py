@@ -95,6 +95,7 @@ class HuffmanTable:
     def WriteTableToFileFlipped(self, fileName):
         table = self.GetTable()
         f = open(fileName, "w")
+        f.write(str(len(table[0]))+'\n')
         for i in range(len(table[0])):
             f.write(table[0][i][::-1]+" "+str(table[1][i])+" "+str(len(str(table[0][i])))+"\n")
         f.close()

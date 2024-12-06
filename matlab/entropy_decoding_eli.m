@@ -3,7 +3,7 @@ clear;
 close all;
 
 %%% USER: Enter Path to Folder with Python Outputs %%%%%%%%%%%%%%
-folderName = './smallCat'; %Use ./Name if the folder is in this directory
+folderName = './tiny'; %Use ./Name if the folder is in this directory
 verbose = 1;
 intermediatePlots = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
