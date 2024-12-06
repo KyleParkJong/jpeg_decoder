@@ -9,7 +9,7 @@ module entropy_decoding (
     output logic signed [11:0] block [7:0][7:0], // to quant/IDCT
     output logic valid_out, // to quant/IDCT
     output logic request, // to input mem
-    output logic [$clog2(`CH+1)-1:0] ch // To huff and dequant
+    output logic [$clog2(`CH+1)-1:0] ch_out // To huff and dequant (sequential)
 );
 
 logic [3:0] huff_size, vli_size;
@@ -23,7 +23,7 @@ logic signed [`BLOCK_BUFF_SIZE-1:0][11:0] line; // Output in line form
 // logic freq, freq_n; // Frequency of current block: 0 for DC, 1 for AC
 logic freq;
 logic clear_n;
-
+logic [$clog2(`CH+1)-1:0] ch;// combinational
 
 
 input_buffer ibuff (
@@ -114,9 +114,11 @@ always_ff @(posedge clk) begin
     if (rst) begin
         //freq <= 0;
         ch_cnt <= 0;
+        ch_out <= 0;
         start <= 0;
     end else begin
         ch_cnt <= ch_cnt_n;
+        ch_out <= ch;
         //freq <= freq_n;
         start <= start_n;
     end

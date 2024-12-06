@@ -7,8 +7,9 @@
 `define DC_H 12                    // Max Size of DC Huffman table (number of entries)
 `define AC_H 162                    // Max Size of AC Huffman table (number of entries)
 `define H 162                     // Max Size of any Huffman table (num entries)
-`define HN 2                    // Number of Huffman table destinations
+`define HN 2                    // Number of Huffman table destinations/indexes
 `define CH 3                    // Number of channels in image
+`define QN 2                    // Number of Quantization table destinations/indexes
 `define IN 32                   // Int to decoder (bits per cycle)
 `define PERIOD 20               // Clock period (ns)
 `define IN_BUS_WIDTH 32         // Input bus bit width 
@@ -32,5 +33,14 @@ typedef struct packed {
     HUFF_TABLE [`HN-1:0] tabs;        // Array of huffman tables
     logic [`CH-1:0][$clog2(`HN+1)-1:0] map; // Maps channel to huffman table number
 } HUFF_PACKET;
+
+typedef struct {
+    logic signed [`Q-1:0] tab [7:0][7:0]; //8 by 8 array of quantization values
+} QUANT_TABLE;
+
+typedef struct {
+    QUANT_TABLE tabs [`QN-1:0] ;        // Array of quantization tables
+    logic [$clog2(`QN+1)-1:0] map [`CH-1:0]; // Maps channel to quantization table number
+} QUANT_PACKET;
 
 `endif
