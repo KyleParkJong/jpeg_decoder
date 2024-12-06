@@ -17,7 +17,7 @@
 `define BLOCK_BUFF_SIZE 64      // Size of block buffer (#coeffs)
 
 typedef struct packed {
-    logic [3:0]  size;
+    logic [4:0]  size;
     logic [15:0] code;
     logic [7:0]  symbol;
 } HUFF_TABLE_ENTRY;
