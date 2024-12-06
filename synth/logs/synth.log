@@ -1,0 +1,510 @@
+
+                           Design Compiler Graphical 
+                                 DC Ultra (TM)
+                                  DFTMAX (TM)
+                              Power Compiler (TM)
+                                 DesignWare (R)
+                                 DC Expert (TM)
+                               Design Vision (TM)
+                               HDL Compiler (TM)
+                               VHDL Compiler (TM)
+                                  DFT Compiler
+                               Design Compiler(R)
+
+               Version T-2022.03-SP3 for linux64 - Jul 12, 2022 
+
+                    Copyright (c) 1988 - 2022 Synopsys, Inc.
+   This software and the associated documentation are proprietary to Synopsys,
+ Inc. This software may only be used in accordance with the terms and conditions
+ of a written license agreement with Synopsys, Inc. All other use, reproduction,
+   or distribution of this software is strictly prohibited.  Licensed Products
+     communicate with Synopsys servers for the purpose of providing software
+    updates, detecting software piracy and verifying that customers are using
+    Licensed Products in conformity with the applicable License Key for such
+  Licensed Products. Synopsys will use information gathered in connection with
+    this process to deliver software updates and pursue software pirates and
+                                   infringers.
+
+ Inclusivity & Diversity - Visit SolvNetPlus to read the "Synopsys Statement on
+            Inclusivity and Diversity" (Refer to article 000036315 at
+                        https://solvnetplus.synopsys.com)
+Initializing...
+###############################
+#                             #
+# Create By Yufan Yue 2023.10 #
+#                             #
+###############################
+set COURSE_NAME $::env(MK_COURSE_NAME)
+EECS598-002
+puts "\[$COURSE_NAME\] Running script [info script]\n"
+[EECS598-002] Running script /home/fdm/eecs598-2/jpeg/synth/scripts/synth.tcl
+
+set PDK_PATH $::env(SAED32_PATH)
+/afs/umich.edu/class/eecs598-002/SAED32/SAED32_EDK
+puts "PDK path at $PDK_PATH"
+PDK path at /afs/umich.edu/class/eecs598-002/SAED32/SAED32_EDK
+set DESIGN_NAME $::env(MK_DESIGN_NAME)
+top
+set RTL_SOURCE_FILES  [glob -nocomplain src/*.v	src/*.sv src/*.vh src/*.svh]
+src/supersample_top.sv src/top.sv src/loeffler2d_idct.sv src/vli_decoder.sv src/unzigzag.sv src/loeffler_idct.sv src/huffman_decoder.sv src/block_buffer.sv src/supersample_4x4.sv src/channel_buffer_copy.sv src/ycbcr2rgb_block.sv src/entropy_decoding.sv src/input_buffer.sv src/diff_decoder.sv src/ycbcr2rgb.sv src/supersample_8x8.sv src/deQuant.sv src/sys_defs.svh
+set NETLIST_FILES ""
+set DESIGN_DEFINES ""
+set DESIGN_PATH          "[pwd]"
+/home/fdm/eecs598-2/jpeg/synth
+set REPORTS_DIR "${DESIGN_PATH}/reports"
+/home/fdm/eecs598-2/jpeg/synth/reports
+set RESULTS_DIR "${DESIGN_PATH}/results"
+/home/fdm/eecs598-2/jpeg/synth/results
+set CONSTRAINTS_FILE "${DESIGN_PATH}/scripts/constraints.tcl"
+/home/fdm/eecs598-2/jpeg/synth/scripts/constraints.tcl
+set USE_NUM_CORES $::env(MK_USE_NUM_CORES)
+6
+set ADDITIONAL_SEARCH_PATH ""
+set MEM_SUFFIX $::env(MK_MEM_SUFFIX)
+typ_1d05_25
+##########################################################################################
+# Library Setup Variables
+##########################################################################################
+#  Target technology logical libraries
+# set MAX_LIBRARY_SET               [glob -nocomplain "${PDK_PATH}/lib/stdcell_rvt/db_ccs/saed32rvt_ss0p95v125c.db"]
+set TYP_LIBRARY_SET               [glob -nocomplain "${PDK_PATH}/lib/stdcell_rvt/db_ccs/saed32rvt_tt1p05v25c.db"]
+/afs/umich.edu/class/eecs598-002/SAED32/SAED32_EDK/lib/stdcell_rvt/db_ccs/saed32rvt_tt1p05v25c.db
+# set MIN_LIBRARY_SET               [glob -nocomplain "${PDK_PATH}/lib/stdcell_rvt/db_ccs/saed32rvt_ff1p16vn40c.db"]
+set corner_case "typ"
+typ
+set TARGET_LIBRARY_FILES        ${TYP_LIBRARY_SET}
+/afs/umich.edu/class/eecs598-002/SAED32/SAED32_EDK/lib/stdcell_rvt/db_ccs/saed32rvt_tt1p05v25c.db
+set ADDITIONAL_LINK_LIB_FILES   "[glob -nocomplain ${DESIGN_PATH}/memory/db/*_${MEM_SUFFIX}_ccs.db]
+                                   [glob -nocomplain ${DESIGN_PATH}/blocks/*/export/*.db]"
+
+                                   
+set_app_var sh_new_variable_message false
+false
+#################################################################################
+# Design Compiler Setup Variables
+#################################################################################
+set_host_options -max_cores [expr min(6, ${USE_NUM_CORES})]
+1
+if { ! [file exists $REPORTS_DIR] } { file mkdir ${REPORTS_DIR} }
+if { ! [file exists $RESULTS_DIR] } { file mkdir ${RESULTS_DIR} }
+#################################################################################
+# Search Path Setup
+#
+# Set up the search path to find the libraries and design files.
+#################################################################################
+set_app_var search_path ". ${ADDITIONAL_SEARCH_PATH} $search_path"
+.  . /usr/caen/synopsys-synth-2022.03-SP3/libraries/syn /usr/caen/synopsys-synth-2022.03-SP3/dw/syn_ver /usr/caen/synopsys-synth-2022.03-SP3/dw/sim_ver
+#################################################################################
+# Library Setup
+#
+# This section is designed to work with the settings from common_setup.tcl
+# without any additional modification.
+#################################################################################
+set_app_var target_library ${TARGET_LIBRARY_FILES}
+/afs/umich.edu/class/eecs598-002/SAED32/SAED32_EDK/lib/stdcell_rvt/db_ccs/saed32rvt_tt1p05v25c.db
+set_app_var synthetic_library dw_foundation.sldb
+dw_foundation.sldb
+set_app_var link_library "* $target_library $ADDITIONAL_LINK_LIB_FILES $synthetic_library"
+* /afs/umich.edu/class/eecs598-002/SAED32/SAED32_EDK/lib/stdcell_rvt/db_ccs/saed32rvt_tt1p05v25c.db 
+                                    dw_foundation.sldb
+check_library > ${REPORTS_DIR}/${DESIGN_NAME}.check_library.rpt
+#################################################################################
+# Read in the RTL Design
+#
+# Read in the RTL source files or read in the elaborated design (.ddc).
+#################################################################################
+if { ! [file exists ${DESIGN_NAME}_dclib] } { file mkdir ${DESIGN_NAME}_dclib }
+define_design_lib WORK -path ${DESIGN_PATH}/${DESIGN_NAME}_dclib
+1
+if { [llength $NETLIST_FILES] > 0} { read_verilog -netlist $NETLIST_FILES }
+if { ![analyze -define ${DESIGN_DEFINES} -f sverilog $RTL_SOURCE_FILES] } { exit 1 }
+Running PRESTO HDLC
+Compiling source file ./src/supersample_top.sv
+Opening include file ./src/sys_defs.svh
+Compiling source file ./src/top.sv
+Opening include file ./src/sys_defs.svh
+Compiling source file ./src/loeffler2d_idct.sv
+Opening include file ./src/sys_defs.svh
+Compiling source file ./src/vli_decoder.sv
+Opening include file ./src/sys_defs.svh
+Compiling source file ./src/unzigzag.sv
+Opening include file ./src/sys_defs.svh
+Warning:  ./src/unzigzag.sv:15: The construct 'declaration initial assignment' is not supported in synthesis; it is ignored. (VER-708)
+Warning:  ./src/unzigzag.sv:24: The construct 'declaration initial assignment' is not supported in synthesis; it is ignored. (VER-708)
+Compiling source file ./src/loeffler_idct.sv
+Compiling source file ./src/huffman_decoder.sv
+Opening include file ./src/sys_defs.svh
+Compiling source file ./src/block_buffer.sv
+Opening include file ./src/sys_defs.svh
+Compiling source file ./src/supersample_4x4.sv
+Opening include file ./src/sys_defs.svh
+Compiling source file ./src/channel_buffer_copy.sv
+Opening include file ./src/sys_defs.svh
+Compiling source file ./src/ycbcr2rgb_block.sv
+Opening include file ./src/sys_defs.svh
+Compiling source file ./src/entropy_decoding.sv
+Opening include file ./src/sys_defs.svh
+Warning:  ./src/entropy_decoding.sv:99: The construct 'declaration initial assignment' is not supported in synthesis; it is ignored. (VER-708)
+Compiling source file ./src/input_buffer.sv
+Opening include file ./src/sys_defs.svh
+Compiling source file ./src/diff_decoder.sv
+Opening include file ./src/sys_defs.svh
+Compiling source file ./src/ycbcr2rgb.sv
+Opening include file ./src/sys_defs.svh
+Compiling source file ./src/supersample_8x8.sv
+Opening include file ./src/sys_defs.svh
+Compiling source file ./src/deQuant.sv
+Opening include file ./src/sys_defs.svh
+Compiling source file ./src/sys_defs.svh
+Presto compilation completed successfully.
+Loading db file '/afs/umich.edu/class/eecs598-002/SAED32/SAED32_EDK/lib/stdcell_rvt/db_ccs/saed32rvt_tt1p05v25c.db'
+Information: Using CCS timing libraries. (TIM-024)
+Loading db file '/usr/caen/synopsys-synth-2022.03-SP3/libraries/syn/dw_foundation.sldb'
+elaborate ${DESIGN_NAME}
+Loading db file '/usr/caen/synopsys-synth-2022.03-SP3/libraries/syn/gtech.db'
+Loading db file '/usr/caen/synopsys-synth-2022.03-SP3/libraries/syn/standard.sldb'
+  Loading link library 'saed32rvt_tt1p05v25c'
+  Loading link library 'gtech'
+Running PRESTO HDLC
+Presto compilation completed successfully. (top)
+Elaborated 1 design.
+Current design is now 'top'.
+Information: Building the design 'entropy_decoding'. (HDL-193)
+
+Inferred memory devices in process
+	in routine entropy_decoding line 115 in file
+		'./src/entropy_decoding.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|      start_reg      | Flip-flop |   1   |  N  | N  | N  | N  | N  | N  | N  |
+|     ch_out_reg      | Flip-flop |   2   |  Y  | N  | N  | N  | N  | N  | N  |
+===============================================================================
+Presto compilation completed successfully. (entropy_decoding)
+Information: Building the design 'deQuant'. (HDL-193)
+Presto compilation completed successfully. (deQuant)
+Information: Building the design 'loeffler2d_idct'. (HDL-193)
+Warning:  ./src/loeffler2d_idct.sv:260: signed to unsigned assignment occurs. (VER-318)
+Presto compilation completed successfully. (loeffler2d_idct)
+Information: Building the design 'supersample_top'. (HDL-193)
+
+Inferred memory devices in process
+	in routine supersample_top line 31 in file
+		'./src/supersample_top.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|     ch_out_reg      | Flip-flop |   2   |  Y  | N  | N  | N  | N  | N  | N  |
+|   block_3_out_reg   | Flip-flop |  512  |  Y  | N  | N  | N  | N  | N  | N  |
+|   block_4_out_reg   | Flip-flop |  512  |  Y  | N  | N  | N  | N  | N  | N  |
+|   block_1_out_reg   | Flip-flop |  512  |  Y  | N  | N  | N  | N  | N  | N  |
+|   block_2_out_reg   | Flip-flop |  512  |  Y  | N  | N  | N  | N  | N  | N  |
+|    valid_out_reg    | Flip-flop |   4   |  Y  | N  | N  | N  | N  | N  | N  |
+===============================================================================
+Presto compilation completed successfully. (supersample_top)
+Information: Building the design 'channel_buffer_copy'. (HDL-193)
+
+Statistics for case statements in always block at line 21 in file
+	'./src/channel_buffer_copy.sv'
+===============================================
+|           Line           |  full/ parallel  |
+===============================================
+|            45            |     no/auto      |
+===============================================
+
+Inferred memory devices in process
+	in routine channel_buffer_copy line 89 in file
+		'./src/channel_buffer_copy.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|      count_reg      | Flip-flop |   3   |  Y  | N  | N  | N  | N  | N  | N  |
+|     y_buff_reg      | Flip-flop | 2048  |  Y  | N  | N  | N  | N  | N  | N  |
+|     cb_buff_reg     | Flip-flop | 2048  |  Y  | N  | N  | N  | N  | N  | N  |
+|     cr_buff_reg     | Flip-flop | 2048  |  Y  | N  | N  | N  | N  | N  | N  |
+|      tail_reg       | Flip-flop |   2   |  Y  | N  | N  | N  | N  | N  | N  |
+===============================================================================
+Statistics for MUX_OPs
+============================================================
+|    block name/line     | Inputs | Outputs | # sel inputs |
+============================================================
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+| channel_buffer_copy/79 |   4    |    8    |      2       |
+| channel_buffer_copy/80 |   4    |    8    |      2       |
+| channel_buffer_copy/81 |   4    |    8    |      2       |
+============================================================
+Presto compilation completed successfully. (channel_buffer_copy)
+Information: Building the design 'ycbcr2rgb_block'. (HDL-193)
+Presto compilation completed successfully. (ycbcr2rgb_block)
+Information: Building the design 'input_buffer'. (HDL-193)
+Warning:  ./src/input_buffer.sv:18: signed to unsigned conversion occurs. (VER-318)
+Warning:  ./src/input_buffer.sv:31: signed to unsigned conversion occurs. (VER-318)
+Warning:  ./src/input_buffer.sv:45: signed to unsigned conversion occurs. (VER-318)
+Warning:  ./src/input_buffer.sv:50: signed to unsigned conversion occurs. (VER-318)
+Warning:  ./src/input_buffer.sv:51: signed to unsigned conversion occurs. (VER-318)
+Warning:  ./src/input_buffer.sv:50: Out of bounds bit select vli_symbol[11], valid bounds are [10:0]. (ELAB-312)
+
+Inferred memory devices in process
+	in routine input_buffer line 55 in file
+		'./src/input_buffer.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|      count_reg      | Flip-flop |   7   |  Y  | N  | N  | N  | N  | N  | N  |
+|     buffer_reg      | Flip-flop |  64   |  Y  | N  | N  | N  | N  | N  | N  |
+|      head_reg       | Flip-flop |   6   |  Y  | N  | N  | N  | N  | N  | N  |
+|      tail_reg       | Flip-flop |   6   |  Y  | N  | N  | N  | N  | N  | N  |
+===============================================================================
+Statistics for MUX_OPs
+======================================================
+| block name/line  | Inputs | Outputs | # sel inputs |
+======================================================
+| input_buffer/45  |   64   |    1    |      6       |
+| input_buffer/45  |   64   |    1    |      6       |
+| input_buffer/45  |   64   |    1    |      6       |
+| input_buffer/45  |   64   |    1    |      6       |
+| input_buffer/45  |   64   |    1    |      6       |
+| input_buffer/45  |   64   |    1    |      6       |
+| input_buffer/45  |   64   |    1    |      6       |
+| input_buffer/45  |   64   |    1    |      6       |
+| input_buffer/45  |   64   |    1    |      6       |
+| input_buffer/45  |   64   |    1    |      6       |
+| input_buffer/45  |   64   |    1    |      6       |
+| input_buffer/45  |   64   |    1    |      6       |
+| input_buffer/45  |   64   |    1    |      6       |
+| input_buffer/45  |   64   |    1    |      6       |
+| input_buffer/45  |   64   |    1    |      6       |
+| input_buffer/45  |   64   |    1    |      6       |
+| input_buffer/50  |   64   |    1    |      6       |
+| input_buffer/50  |   64   |    1    |      6       |
+| input_buffer/50  |   64   |    1    |      6       |
+| input_buffer/50  |   64   |    1    |      6       |
+| input_buffer/50  |   64   |    1    |      6       |
+| input_buffer/50  |   64   |    1    |      6       |
+| input_buffer/50  |   64   |    1    |      6       |
+| input_buffer/50  |   64   |    1    |      6       |
+| input_buffer/50  |   64   |    1    |      6       |
+| input_buffer/50  |   64   |    1    |      6       |
+| input_buffer/50  |   64   |    1    |      6       |
+======================================================
+Presto compilation completed successfully. (input_buffer)
+Information: Building the design 'vli_decoder'. (HDL-193)
+Warning:  ./src/vli_decoder.sv:14: signed to unsigned conversion occurs. (VER-318)
+Warning:  ./src/vli_decoder.sv:15: signed to unsigned conversion occurs. (VER-318)
+Warning:  ./src/vli_decoder.sv:21: unsigned to signed assignment occurs. (VER-318)
+Warning:  ./src/vli_decoder.sv:22: unsigned to signed assignment occurs. (VER-318)
+Warning:  ./src/vli_decoder.sv:23: unsigned to signed assignment occurs. (VER-318)
+Warning:  ./src/vli_decoder.sv:24: unsigned to signed assignment occurs. (VER-318)
+Warning:  ./src/vli_decoder.sv:25: unsigned to signed assignment occurs. (VER-318)
+Warning:  ./src/vli_decoder.sv:26: unsigned to signed assignment occurs. (VER-318)
+Warning:  ./src/vli_decoder.sv:27: unsigned to signed assignment occurs. (VER-318)
+Warning:  ./src/vli_decoder.sv:28: unsigned to signed assignment occurs. (VER-318)
+Warning:  ./src/vli_decoder.sv:29: unsigned to signed assignment occurs. (VER-318)
+Warning:  ./src/vli_decoder.sv:30: unsigned to signed assignment occurs. (VER-318)
+Warning:  ./src/vli_decoder.sv:31: unsigned to signed assignment occurs. (VER-318)
+Warning:  ./src/vli_decoder.sv:35: unsigned to signed assignment occurs. (VER-318)
+Warning:  ./src/vli_decoder.sv:14: Out of bounds bit select symbol_in[11], valid bounds are [10:0]. (ELAB-312)
+
+Statistics for case statements in always block at line 11 in file
+	'./src/vli_decoder.sv'
+===============================================
+|           Line           |  full/ parallel  |
+===============================================
+|            19            |    auto/auto     |
+===============================================
+Presto compilation completed successfully. (vli_decoder)
+Information: Building the design 'huffman_decoder'. (HDL-193)
+Warning:  ./src/huffman_decoder.sv:26: signed to unsigned conversion occurs. (VER-318)
+Warning:  ./src/huffman_decoder.sv:30: signed to unsigned conversion occurs. (VER-318)
+Warning:  ./src/huffman_decoder.sv:38: signed to unsigned conversion occurs. (VER-318)
+Warning:  ./src/huffman_decoder.sv:42: signed to unsigned conversion occurs. (VER-318)
+Warning:  ./src/huffman_decoder.sv:25: Out of bounds bit select mask[17], valid bounds are [16:0]. (ELAB-312)
+Warning:  ./src/huffman_decoder.sv:37: Out of bounds bit select mask[17], valid bounds are [16:0]. (ELAB-312)

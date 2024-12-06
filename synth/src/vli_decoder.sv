@@ -27,7 +27,7 @@ always_comb begin
             4'd7: value = {{5{1'b1}}, 7'(symbol+1)};
             4'd8: value = {{4{1'b1}}, 8'(symbol+1)};
             4'd9: value = {{3{1'b1}}, 9'(symbol+1)};
-            4'd10: value = {{2{1'b1}},10'(symbol+1)};
+            4'd10: value = {{2{1'b1}}, 10'(symbol+1)};
             4'd11: value = {1'b1, 11'(symbol+1)};
             default: value = 12'b0;
         endcase
