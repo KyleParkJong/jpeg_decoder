@@ -1,11 +1,11 @@
-`include "define.vh"
+`include "sys_defs.svh"
 module ycbcr2rgb (
     input  logic clk,
     input  logic rst,
-    input  logic unsigned [7:0] y, cb, cr, // signed (N,R)=(16,7)
-    input  logic vld_i,
-    output logic unsigned [7:0] r, g, b,   // unsigned 8 bits
-    output logic vld_o
+    input  logic [7:0] y, cb, cr, // signed (N,R)=(16,7)
+    input  logic valid_in,
+    output logic [7:0] r, g, b,   // unsigned 8 bits
+    output logic valid_out
 );
 
 wire [16:0] r_tmp;      // (22,14)
@@ -45,18 +45,18 @@ always @(posedge clk) begin
         r <= 0;
         g <= 0;
         b <= 0;
-        vld_o <= 0;
+        valid_out <= 0;
     end else begin
-        if (vld_i) begin
+        if (valid_in) begin
             r <= r_round;
             g <= g_round;
             b <= b_round;
-            vld_o <= 1;
+            valid_out <= 1;
         end else begin
             r <= 0;
             g <= 0;
             b <= 0;
-            vld_o <= 0;
+            valid_out <= 0;
         end
     end
 end
