@@ -3,31 +3,19 @@
 // For Cb, Cr block
 // 4x4 sub-block -> 8x8 block
 module supersample_4x4 (
-    input logic clk,
-    input logic rst,
-    input logic [$clog2(`CH+1)-1:0] ch_in,      // Cb: 2'b01, Cr: 2'b10
+    input logic [$clog2(`CH+1)-1:0] ch,      // Cb: 2'b01, Cr: 2'b10
     input logic valid_in,
-    input logic signed [7:0] block_in [3:0][3:0],       // input: 4x4 block
-    output logic signed [7:0] block_out [7:0][7:0],     // output: 8x8 block
+    input logic signed [8:0] block_in [3:0][3:0],       // input: 4x4 block
+    output logic signed [8:0] block_out [7:0][7:0],     // output: 8x8 block
     output logic valid_out
 );
 
-logic signed [7:0] block [7:0][7:0];
+logic signed [8:0] block [7:0][7:0];
 logic valid;
+int row_offset, col_offset;
 
-always_ff @(posedge clk, posedge rst) begin
-    if (rst) begin
-        for (int i = 0; i < 8; i = i + 1) begin
-            for (int j = 0; j < 8; j = j + 1) begin
-                block_out[i][j] <= 0;
-            end
-        end
-        valid_out <= 0;
-    end else begin
-        block_out <= block;
-        valid_out <= valid;
-    end
-end 
+assign block_out = block;
+assign valid_out = valid;
 
 always_comb begin
     // Initialize block to zero by default
@@ -38,19 +26,90 @@ always_comb begin
     end
     valid = 0;
 
-    if (valid_in && (ch_in == 2'b01 || ch_in == 2'b10)) begin
-        for (int i = 0; i < 4; i++) begin
-            for (int j = 0; j < 4; j++) begin
-                int row_offset = 6 - (i * 2);
-                int col_offset = 6 - (j * 2);
+    if (valid_in && (ch == 2'b01 || ch == 2'b10)) begin
+        block[7][7] = block_in[3][3];
+        block[7][6] = block_in[3][3];
+        block[6][7] = block_in[3][3];
+        block[6][6] = block_in[3][3];
 
-                // Assign values to corresponding block regions
-                block[row_offset + 1][col_offset + 1] = block_in[3 - i][3 - j];
-                block[row_offset + 1][col_offset    ] = block_in[3 - i][3 - j];
-                block[row_offset    ][col_offset + 1] = block_in[3 - i][3 - j];
-                block[row_offset    ][col_offset    ] = block_in[3 - i][3 - j];
-            end
-        end
+        block[7][5] = block_in[3][2];
+        block[7][4] = block_in[3][2];
+        block[6][5] = block_in[3][2];
+        block[6][4] = block_in[3][2];
+
+        block[7][3] = block_in[3][1];
+        block[7][2] = block_in[3][1];
+        block[6][3] = block_in[3][1];
+        block[6][2] = block_in[3][1];
+
+        block[7][1] = block_in[3][0];
+        block[7][0] = block_in[3][0];
+        block[6][1] = block_in[3][0];
+        block[6][0] = block_in[3][0];
+
+        //
+        block[5][7] = block_in[2][3];
+        block[5][6] = block_in[2][3];
+        block[4][7] = block_in[2][3];
+        block[4][6] = block_in[2][3];
+
+        block[5][5] = block_in[2][2];
+        block[5][4] = block_in[2][2];
+        block[4][5] = block_in[2][2];
+        block[4][4] = block_in[2][2];
+
+        block[5][3] = block_in[2][1];
+        block[5][2] = block_in[2][1];
+        block[4][3] = block_in[2][1];
+        block[4][2] = block_in[2][1];
+
+        block[5][1] = block_in[2][0];
+        block[5][0] = block_in[2][0];
+        block[4][1] = block_in[2][0];
+        block[4][0] = block_in[2][0];
+
+        //
+        block[3][7] = block_in[1][3];
+        block[3][6] = block_in[1][3];
+        block[2][7] = block_in[1][3];
+        block[2][6] = block_in[1][3];
+
+        block[3][5] = block_in[1][2];
+        block[3][4] = block_in[1][2];
+        block[2][5] = block_in[1][2];
+        block[2][4] = block_in[1][2];
+
+        block[3][3] = block_in[1][1];
+        block[3][2] = block_in[1][1];
+        block[2][3] = block_in[1][1];
+        block[2][2] = block_in[1][1];
+
+        block[3][1] = block_in[1][0];
+        block[3][0] = block_in[1][0];
+        block[2][1] = block_in[1][0];
+        block[2][0] = block_in[1][0];
+
+        //
+        block[1][7] = block_in[0][3];
+        block[1][6] = block_in[0][3];
+        block[0][7] = block_in[0][3];
+        block[0][6] = block_in[0][3];
+
+        block[1][5] = block_in[0][2];
+        block[1][4] = block_in[0][2];
+        block[0][5] = block_in[0][2];
+        block[0][4] = block_in[0][2];
+
+        block[1][3] = block_in[0][1];
+        block[1][2] = block_in[0][1];
+        block[0][3] = block_in[0][1];
+        block[0][2] = block_in[0][1];
+
+        block[1][1] = block_in[0][0];
+        block[1][0] = block_in[0][0];
+        block[0][1] = block_in[0][0];
+        block[0][0] = block_in[0][0];
+
         valid = 1;
     end
 end
