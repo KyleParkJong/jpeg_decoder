@@ -3,7 +3,8 @@
 module input_buffer (
     input logic clk, rst,
     input logic [`IN_BUS_WIDTH-1:0] data_in,
-    input logic [3:0] huff_size, vli_size,
+    input logic [4:0] huff_size,
+    input logic [3:0] vli_size,
     input logic wr_en, rd_en,
 
     output logic [15:0] top_bits,

@@ -11,9 +11,11 @@ module entropy_decoding_tb;
     logic request;
     logic [$clog2(`CH+1)-1:0] ch;
 
+    integer block_count;
+
     import displays::*;
-    integer finput, line_len, index;
-    string imgname = "tinyWide";
+    integer finput, line_len, index, fout;
+    string imgname = "smallCat";
 
     entropy_decoding dut (
         // in
@@ -31,6 +33,8 @@ module entropy_decoding_tb;
         hp.map[0] = 0;
         hp.map[1] = 1;
         hp.map[2] = 1;
+        
+        block_count = 0;
 
         finput = $fopen({"../python/",imgname,"/DC_HuffTable_Index0Flipped.txt"}, "r");
         line_len = -1;
@@ -85,6 +89,7 @@ module entropy_decoding_tb;
         @(posedge clk);
         rst = 0;
 
+        fout = $fopen("out/decoded_values.txt", "w");
         finput = $fopen({"../python/",imgname,"/bitStreamFlipped.txt"}, "r");
         line_len = -1;
         while(!$feof(finput)) begin
@@ -98,22 +103,33 @@ module entropy_decoding_tb;
             if (valid_out) disp_block;
         end
         @(negedge clk);
+        
+
         valid_in = 0;
         for (int i = 0; i < 20; ++i) begin
             @(negedge clk);
             if (valid_out) disp_block;
         end
+        $fclose(fout);
         $finish; 
     end
 
     task disp_block;
-        $write("Output Block\n");
+        $fwrite(fout, "=================================\n");
+        $fwrite(fout, "Block %4d\n", block_count);
+        $fwrite(fout, "=================================\n");
+        $write("=================================\n");
+        $write("Block %4d\n", block_count);
+        $write("=================================\n");
         for (int r = 0; r < 8; ++r) begin
             for (int c = 0; c < 8; ++c) begin
+                $fwrite(fout, "%4d ", block[r][c]);
                 $write("%4d ", block[r][c]);
             end
+            $fwrite(fout, "\n");
             $write("\n");
         end
+        block_count = block_count + 1;
     endtask
 
     always #(`PERIOD/2) clk = ~clk;
