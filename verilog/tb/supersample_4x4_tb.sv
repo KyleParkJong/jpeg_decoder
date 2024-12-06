@@ -4,9 +4,9 @@ module supersample_4x4_tb ();
 
 logic [$clog2(`CH+1)-1:0] ch;      // Cb: 2'b01, Cr: 2'b10
 logic valid_in;
-logic [8:0] block_in [3:0][3:0];       // input: 4x4 block
+logic [7:0] block_in [3:0][3:0];       // input: 4x4 block
 
-logic [8:0] block_out [7:0][7:0];     // output: 8x8 block
+logic [7:0] block_out [7:0][7:0];     // output: 8x8 block
 logic valid_out;
 
 supersample_4x4 u0 (

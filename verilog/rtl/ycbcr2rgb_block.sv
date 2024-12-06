@@ -1,3 +1,5 @@
+`include "sys_defs.svh"
+
 module ycbcr2rgb_block (
     input  logic clk,
     input  logic rst,
@@ -105,7 +107,6 @@ assign cr_row7 = cr[7][7:0];
 
 // Convert row 0 of input flow to RGB
 ycbcr2rgb ycbcr2rgb_row0 [7:0] (
-
     .clk(clk),
     .rst(rst),
     .valid_in(valid_in),
@@ -115,7 +116,7 @@ ycbcr2rgb ycbcr2rgb_row0 [7:0] (
     .r(r_row0),
     .g(g_row0),
     .b(b_row0),
-    .valid_out(internal_valid_out[0]),
+    .valid_out(internal_valid_out[0])
 );
 
 // Convert row 1 of input flow to RGB
@@ -130,7 +131,7 @@ ycbcr2rgb ycbcr2rgb_row1 [7:0] (
     .r(r_row1),
     .g(g_row1),
     .b(b_row1),
-    .valid_out(internal_valid_out[1]),
+    .valid_out(internal_valid_out[1])
 );
 
 // Convert row 2 of input flow to RGB
@@ -145,7 +146,7 @@ ycbcr2rgb ycbcr2rgb_row2 [7:0] (
     .r(r_row2),
     .g(g_row2),
     .b(b_row2),
-    .valid_out(internal_valid_out[2]),
+    .valid_out(internal_valid_out[2])
 );
 
 // Convert row 3 of input flow to RGB
@@ -160,7 +161,7 @@ ycbcr2rgb ycbcr2rgb_row3 [7:0] (
     .r(r_row3),
     .g(g_row3),
     .b(b_row3),
-    .valid_out(internal_valid_out[3]),
+    .valid_out(internal_valid_out[3])
 );
 
 // Convert row 4 of input flow to RGB
@@ -175,7 +176,7 @@ ycbcr2rgb ycbcr2rgb_row4 [7:0] (
     .r(r_row4),
     .g(g_row4),
     .b(b_row4),
-    .valid_out(internal_valid_out[4]),
+    .valid_out(internal_valid_out[4])
 );
 
 // Convert row 5 of input flow to RGB
@@ -190,7 +191,7 @@ ycbcr2rgb ycbcr2rgb_row5 [7:0] (
     .r(r_row5),
     .g(g_row5),
     .b(b_row5),
-    .valid_out(internal_valid_out[5]),
+    .valid_out(internal_valid_out[5])
 );
 
 // Convert row 6 of input flow to RGB
@@ -205,7 +206,7 @@ ycbcr2rgb ycbcr2rgb_row6 [7:0] (
     .r(r_row6),
     .g(g_row6),
     .b(b_row6),
-    .valid_out(internal_valid_out[6]),
+    .valid_out(internal_valid_out[6])
 );
 
 // Convert row 7 of input flow to RGB
@@ -220,7 +221,7 @@ ycbcr2rgb ycbcr2rgb_row7 [7:0] (
     .r(r_row7),
     .g(g_row7),
     .b(b_row7),
-    .valid_out(internal_valid_out[7]),
+    .valid_out(internal_valid_out[7])
 );
 
 // Assemble rows for the R output block
@@ -262,4 +263,4 @@ assign valid_out = (&internal_valid_out[0]) &
                    (&internal_valid_out[6]) & 
                    (&internal_valid_out[7]) ;
 
-endmodule; ycbcr2rgb_block
+endmodule

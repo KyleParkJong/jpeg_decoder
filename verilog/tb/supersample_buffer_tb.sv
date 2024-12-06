@@ -5,7 +5,7 @@ logic clk;
 logic rst;
 logic valid_in;
 logic [$clog2(`CH+1)-1:0] ch_in;     // 0=Y, 1=Cb, 2=Cr
-logic [8:0] block_in [7:0][7:0];
+logic [7:0] block_in [7:0][7:0];
 logic [`Q-1:0] y_out [7:0][7:0];
 logic [`Q-1:0] cb_out [7:0][7:0];
 logic [`Q-1:0] cr_out [7:0][7:0];
