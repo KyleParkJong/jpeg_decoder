@@ -9,7 +9,7 @@ module entropy_decoding (
     output logic signed [11:0] block [7:0][7:0], // to quant/IDCT
     output logic valid_out, // to quant/IDCT
     output logic request, // to input mem
-    output logic [$clog2(`CH+1)-1:0] ch_out // To huff and dequant (seq)
+    output logic [$clog2(`CH+1)-1:0] ch_out // To huff and dequant (sequential)
 );
 
 logic [3:0] huff_size, vli_size;
@@ -24,7 +24,6 @@ logic signed [`BLOCK_BUFF_SIZE-1:0][11:0] line; // Output in line form
 logic freq;
 logic clear_n;
 logic [$clog2(`CH+1)-1:0] ch; // (combinational)
-
 
 
 input_buffer ibuff (
