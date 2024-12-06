@@ -8,9 +8,10 @@ module deQuant_tb;
     //Outputs
     logic request;
     //Temporary
-    logic signed [11:0] blockOut_QuantTest [7:0][7:0];
-    logic valid_out_QuantTest;
-    logic [$clog2(`CH+1)-1:0] ch_QuantTest;
+    logic [`Q-1:0] y_out [7:0][7:0];
+    logic [`Q-1:0] cb_out [7:0][7:0];
+    logic [`Q-1:0] cr_out [7:0][7:0];
+    logic valid_out_Buffer;
 
     //Instantiate Top module
     top dut (
@@ -23,15 +24,17 @@ module deQuant_tb;
         //Outputs
         .request,
         //Temporary
-        .blockOut_QuantTest,
-        .valid_out_QuantTest,
-        .ch_QuantTest
+        .y_out,
+        .cb_out,
+        .cr_out,
+        .valid_out_Buffer
     );
 
     import displays::*;
 
     integer finput, line_len, index;
     integer row;
+    integer blocksProccessed = 0;
 
     always #(`PERIOD/2) clk = ~clk;
 
@@ -131,23 +134,44 @@ module deQuant_tb;
             end else begin
                 valid_in = 0;
             end
-            if (valid_out_QuantTest) disp_block;
+            if (valid_out_Buffer) begin
+                disp_block;
+                blocksProccessed +=1;
+            end
         end
         @(negedge clk);
         valid_in = 0;
-        for (int i = 0; i < 20; ++i) begin
+
+        while (blocksProccessed < 4) begin
             @(negedge clk);
-            if (valid_out_QuantTest) disp_block;
+            if (valid_out_Buffer) begin
+                disp_block;
+                blocksProccessed += 1;
+            end
         end
+
         $finish; 
     end
 
     task disp_block;
-        $write("Output Block: ");
-        $write("Ch: %d\n", ch_QuantTest);
+        $write("Y Block: \n");
         for (int r = 0; r < 8; ++r) begin
             for (int c = 0; c < 8; ++c) begin
-                $write("%4d ", blockOut_QuantTest[r][c]);
+                $write("%4d ", y_out[r][c]);
+            end
+            $write("\n");
+        end
+        $write("cb Block: \n");
+        for (int r = 0; r < 8; ++r) begin
+            for (int c = 0; c < 8; ++c) begin
+                $write("%4d ", cb_out[r][c]);
+            end
+            $write("\n");
+        end
+        $write("cr Block: \n");
+        for (int r = 0; r < 8; ++r) begin
+            for (int c = 0; c < 8; ++c) begin
+                $write("%4d ", cr_out[r][c]);
             end
             $write("\n");
         end

@@ -7,7 +7,8 @@ module huffman_decoder(
     input logic freq,
     input logic [$clog2(`CH+1)-1:0] ch,
 
-    output logic [3:0]      run, vli_size, code_size,
+    output logic [3:0]      run, vli_size, 
+    output logic [4:0]      code_size,
     output logic            valid_out
 );
 

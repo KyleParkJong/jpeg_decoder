@@ -1,12 +1,14 @@
+`include "sys_defs.svh"
+
 module loeffler2d_idct (
 
     input  logic clk,
     input  logic rst,
     input  logic valid_in,
-    input  logic [1:0] channel_in,
+    input  logic [$clog2(`CH+1)-1:0] channel_in,
     input  logic signed   [11:0] idct_in  [7:0][7:0],
     output logic unsigned [7:0]  idct_out [7:0][7:0],
-    output logic [1:0] channel_out,
+    output logic [$clog2(`CH+1)-1:0] channel_out,
     output logic valid_out
 
 );
@@ -232,16 +234,20 @@ loeffler_idct col7_idct (
 always_comb begin
     for(int row = 0; row < 8; row++) begin
         for(int col = 0; col < 8; col++) begin
-            idct_out_normalized[row][col] = (second_idct_out_array[row][col] / 8);
-            
-            if(idct_out_normalized[row][col] > 127) begin
-                idct_out_norm_before_transpose[row][col] = 127;
-            end
-            else if(idct_out_normalized[row][col] < -128) begin
-                idct_out_norm_before_transpose[row][col] = -128;
-            end
-            else begin
-                idct_out_norm_before_transpose[row][col] = idct_out_normalized[row][col];
+            idct_out_normalized[row][col] = '0;
+            idct_out_norm_before_transpose[row][col] = '0;
+            if(valid_out) begin
+                idct_out_normalized[row][col] = (second_idct_out_array[row][col] / 8) + 128;
+               
+                if(idct_out_normalized[row][col] > 255) begin
+                    idct_out_norm_before_transpose[row][col] = 255;
+                end
+                else if(idct_out_normalized[row][col] < 0) begin
+                    idct_out_norm_before_transpose[row][col] = 0;
+                end
+                else begin
+                    idct_out_norm_before_transpose[row][col] = idct_out_normalized[row][col];
+                end
             end
         end
     end
@@ -258,4 +264,4 @@ end
 
 assign valid_out = &second_valid_out_array;
 
-endmodule: loeffler2d_idct
+endmodule

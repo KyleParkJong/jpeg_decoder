@@ -27,6 +27,7 @@ module loeffler_idct
     logic [1:0] stage7_channel_out;
 
     logic stage1_valid_in;
+    logic [1:0] channel_in_reg;
 
     logic signed [63:0] stage1_in  [7:0];
     logic signed [63:0] stage1_out [7:0];
@@ -41,12 +42,14 @@ module loeffler_idct
         if(rst) begin
             for(int i = 0; i < 8; i++) stage1_in[i] <= '0;
             stage1_valid_in <= '0;
+            channel_in_reg <= '0;
         end
         else begin
             stage1_valid_in <= valid_in;
             for(int i = 0; i < 8; i++) begin
                 stage1_in[i] <= idct_in[i];
             end
+            channel_in_reg <= channel_in;
         end
     end
 
@@ -56,7 +59,7 @@ module loeffler_idct
         .clk(clk),
         .rst(rst),
         .valid_in(stage1_valid_in),
-        .channel_in(channel_in),
+        .channel_in(channel_in_reg),
         .x_in_reversed(stage1_in),
         .y_out(stage1_out),
         .channel_out(stage1_channel_out),
@@ -225,7 +228,7 @@ module loeffler_idct_stage_2 #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH)
     input  logic [1:0] channel_in,
     input  logic signed [INPUT_WIDTH-1:0]  x_in  [7:0],
     output logic signed [OUTPUT_WIDTH-1:0] y_out [8:0],
-    input  logic [1:0] channel_out,
+    output  logic [1:0] channel_out,
     output logic valid_out
 );
 
@@ -277,7 +280,7 @@ module loeffler_idct_stage_3 #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH)
     input  logic [1:0] channel_in,
     input  logic signed [INPUT_WIDTH-1:0]  x_in  [8:0],
     output logic signed [OUTPUT_WIDTH-1:0] y_out [8:0],
-    input  logic [1:0] channel_out,
+    output  logic [1:0] channel_out,
     output logic valid_out
 );
 
@@ -329,7 +332,7 @@ module loeffler_idct_stage_4 #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH)
     input  logic [1:0] channel_in,
     input  logic signed [INPUT_WIDTH-1:0]  x_in  [8:0],
     output logic signed [OUTPUT_WIDTH-1:0] y_out [8:0],
-    input  logic [1:0] channel_out,
+    output  logic [1:0] channel_out,
     output logic valid_out
 );
 
@@ -383,7 +386,7 @@ module loeffler_idct_stage_5 #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH)
     input  logic [1:0] channel_in,
     input  logic signed [INPUT_WIDTH-1:0]  x_in  [8:0],
     output logic signed [OUTPUT_WIDTH-1:0] y_out [9:0],
-    input  logic [1:0] channel_out,
+    output  logic [1:0] channel_out,
     output logic valid_out
 );
 
@@ -438,7 +441,7 @@ module loeffler_idct_stage_6 #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH)
     input  logic [1:0] channel_in,
     input  logic signed [INPUT_WIDTH-1:0]  x_in  [9:0],
     output logic signed [OUTPUT_WIDTH-1:0] y_out [9:0],
-    input  logic [1:0] channel_out,
+    output  logic [1:0] channel_out,
     output logic valid_out
 );
 
@@ -494,7 +497,7 @@ module loeffler_idct_stage_7 #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH)
     input  logic [1:0] channel_in,
     input  logic signed [INPUT_WIDTH-1:0]  x_in  [9:0],
     output logic signed [OUTPUT_WIDTH-1:0] y_out [7:0],
-    input  logic [1:0] channel_out,
+    output  logic [1:0] channel_out,
     output logic valid_out
 );
 
@@ -540,7 +543,7 @@ module loeffler_idct_stage_8 #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH)
     input  logic [1:0] channel_in,
     input  logic signed [INPUT_WIDTH-1:0]  x_in  [7:0],
     output logic signed [OUTPUT_WIDTH-1:0] y_out [7:0],
-    input  logic [1:0] channel_out,
+    output  logic [1:0] channel_out,
     output logic valid_out
 );
 

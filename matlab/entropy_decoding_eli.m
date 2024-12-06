@@ -3,7 +3,7 @@ clear;
 close all;
 
 %%% USER: Enter Path to Folder with Python Outputs %%%%%%%%%%%%%%
-folderName = './tiny'; %Use ./Name if the folder is in this directory
+folderName = './smallCat'; %Use ./Name if the folder is in this directory
 verbose = 1;
 intermediatePlots = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -138,7 +138,7 @@ blocksIDCT = zeros(8,1.5*blocksTall*blocksWide*8);
 for i = 1:8:length(blocksDQ)
     blocksIDCT(1:8,i:i+7) = idct2(blocksDQ(1:8,i:i+7));
 end
-blocksShifted = blocksIDCT+127;
+blocksShifted = blocksIDCT+128;
 
 if intermediatePlots == 1
     figure;
@@ -241,6 +241,19 @@ for i = 1:8:length(RGB)
         lrudTracker = 0;
     end
 end
+
+finn = fopen(folderName+"/decoded_values.txt", "w");
+oc = 0;
+for i = 1:8:length(blocks)
+    fprintf(finn, "=================================\n");
+    fprintf(finn, "Block %4d\n", oc);
+    fprintf(finn, "=================================\n");
+    for j = 1:8
+        fprintf(finn, "%4d %4d %4d %4d %4d %4d %4d %4d\n", blocks(j,i:i+7));
+    end
+    oc = oc + 1;
+end
+fclose(finn);
 
 figure;
 imshow(finalImg,[]); 

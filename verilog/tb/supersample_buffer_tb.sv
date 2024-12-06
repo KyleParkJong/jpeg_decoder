@@ -197,7 +197,7 @@ initial begin
 
     wait_cycles(15);
 
-    $stop;
+    $finish;
 
 end
 endmodule

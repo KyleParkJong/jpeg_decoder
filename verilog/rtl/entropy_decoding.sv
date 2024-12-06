@@ -12,7 +12,8 @@ module entropy_decoding (
     output logic [$clog2(`CH+1)-1:0] ch_out // To huff and dequant (sequential)
 );
 
-logic [3:0] huff_size, vli_size;
+logic [3:0] vli_size;
+logic [4:0] huff_size;
 logic [15:0] top_bits;
 logic [10:0] vli_symbol;
 logic ibuff_valid;
