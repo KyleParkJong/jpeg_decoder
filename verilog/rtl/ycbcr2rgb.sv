@@ -1,10 +1,11 @@
 `include "define.vh"
 module ycbcr2rgb (
-    input clk, rstn,
-    input unsigned [7:0] y, cb, cr, // signed (N,R)=(16,7)
-    input vld_i,
-    output reg [7:0] r, g, b,      // unsigned 8 bits
-    output reg vld_o
+    input  logic clk,
+    input  logic rst,
+    input  logic unsigned [7:0] y, cb, cr, // signed (N,R)=(16,7)
+    input  logic vld_i,
+    output logic unsigned [7:0] r, g, b,   // unsigned 8 bits
+    output logic vld_o
 );
 
 wire [16:0] r_tmp;      // (22,14)
@@ -39,8 +40,8 @@ assign r_round  = |r_tmp[16:8] ? 8'd255 : r_tmp[7:0];
 assign g_round  = |g_tmp[16:8] ? 8'd255 : g_tmp[7:0];
 assign b_round  = |b_tmp[16:8] ? 8'd255 : b_tmp[7:0];
 
-always @(posedge clk, negedge rstn) begin 
-    if (!rstn) begin
+always @(posedge clk) begin 
+    if (rst) begin
         r <= 0;
         g <= 0;
         b <= 0;
