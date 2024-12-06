@@ -3,14 +3,14 @@
 // For Cb, Cr block
 // 4x4 sub-block -> 8x8 block
 module supersample_4x4 (
-    input logic [$clog2(`CH+1)-1:0] ch,      // Cb: 2'b01, Cr: 2'b10
-    input logic valid_in,
-    input logic signed [8:0] block_in [3:0][3:0],       // input: 4x4 block
-    output logic signed [8:0] block_out [7:0][7:0],     // output: 8x8 block
+    input  logic [$clog2(`CH+1)-1:0] ch,      // Cb: 2'b01, Cr: 2'b10
+    input  logic valid_in,
+    input  logic [8:0] block_in [3:0][3:0],       // input: 4x4 block
+    output logic [8:0] block_out [7:0][7:0],     // output: 8x8 block
     output logic valid_out
 );
 
-logic signed [8:0] block [7:0][7:0];
+logic [8:0] block [7:0][7:0];
 logic valid;
 int row_offset, col_offset;
 

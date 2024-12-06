@@ -6,11 +6,11 @@ logic clk;
 logic rst;
 logic valid_in;
 logic [$clog2(`CH+1)-1:0] ch_in;     // 0=Y, 1=Cb, 2=Cr
-logic signed [8:0] block_in [7:0][7:0];
-logic signed [8:0] block_1_out [7:0][7:0];
-logic signed [8:0] block_2_out [7:0][7:0];
-logic signed [8:0] block_3_out [7:0][7:0];
-logic signed [8:0] block_4_out [7:0][7:0];
+logic [8:0] block_in [7:0][7:0];
+logic [8:0] block_1_out [7:0][7:0];
+logic [8:0] block_2_out [7:0][7:0];
+logic [8:0] block_3_out [7:0][7:0];
+logic [8:0] block_4_out [7:0][7:0];
 logic [$clog2(`CH+1)-1:0] ch_out;
 logic [3:0] valid_out;
 
