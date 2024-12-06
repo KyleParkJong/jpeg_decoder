@@ -3,8 +3,10 @@ module loeffler_idct
     input  logic clk,
     input  logic rst,
     input  logic valid_in,
+    input  logic [1:0] channel_in,
     input  logic signed [63:0] idct_in  [7:0],
     output logic signed [63:0] idct_out [7:0],
+    output logic [1:0] channel_out,
     output logic valid_out
 );
 
@@ -15,6 +17,14 @@ module loeffler_idct
     logic stage5_valid_out;
     logic stage6_valid_out;
     logic stage7_valid_out;
+
+    logic [1:0] stage1_channel_out;
+    logic [1:0] stage2_channel_out;
+    logic [1:0] stage3_channel_out;
+    logic [1:0] stage4_channel_out;
+    logic [1:0] stage5_channel_out;
+    logic [1:0] stage6_channel_out;
+    logic [1:0] stage7_channel_out;
 
     logic stage1_valid_in;
 
@@ -46,8 +56,10 @@ module loeffler_idct
         .clk(clk),
         .rst(rst),
         .valid_in(stage1_valid_in),
+        .channel_in(channel_in),
         .x_in_reversed(stage1_in),
         .y_out(stage1_out),
+        .channel_out(stage1_channel_out),
         .valid_out(stage1_valid_out)
     );
 
@@ -58,8 +70,10 @@ module loeffler_idct
         .clk(clk),
         .rst(rst),
         .valid_in(stage1_valid_out),
+        .channel_in(stage1_channel_out),
         .x_in(stage1_out),
         .y_out(stage2_out),
+        .channel_out(stage2_channel_out),
         .valid_out(stage2_valid_out)
     );
 
@@ -69,8 +83,10 @@ module loeffler_idct
         .clk(clk),
         .rst(rst),
         .valid_in(stage2_valid_out),
+        .channel_in(stage2_channel_out),
         .x_in(stage2_out),
         .y_out(stage3_out),
+        .channel_out(stage3_channel_out),
         .valid_out(stage3_valid_out)
     );
 
@@ -80,8 +96,10 @@ module loeffler_idct
         .clk(clk),
         .rst(rst),
         .valid_in(stage3_valid_out),
+        .channel_in(stage3_channel_out),
         .x_in(stage3_out),
         .y_out(stage4_out),
+        .channel_out(stage4_channel_out),
         .valid_out(stage4_valid_out)
     );
 
@@ -91,8 +109,10 @@ module loeffler_idct
         .clk(clk),
         .rst(rst),
         .valid_in(stage4_valid_out),
+        .channel_in(stage4_channel_out),
         .x_in(stage4_out),
         .y_out(stage5_out),
+        .channel_out(stage5_channel_out),
         .valid_out(stage5_valid_out)
     );
 
@@ -102,8 +122,10 @@ module loeffler_idct
         .clk(clk),
         .rst(rst),
         .valid_in(stage5_valid_out),
+        .channel_in(stage5_channel_out),
         .x_in(stage5_out),
         .y_out(stage6_out),
+        .channel_out(stage6_channel_out),
         .valid_out(stage6_valid_out)
     );
 
@@ -113,8 +135,10 @@ module loeffler_idct
         .clk(clk),
         .rst(rst),
         .valid_in(stage6_valid_out),
+        .channel_in(stage6_channel_out),
         .x_in(stage6_out),
         .y_out(stage7_out),
+        .channel_out(stage7_channel_out),
         .valid_out(stage7_valid_out)
     );
 
@@ -124,8 +148,10 @@ module loeffler_idct
         .clk(clk),
         .rst(rst),
         .valid_in(stage7_valid_out),
+        .channel_in(stage7_channel_out),
         .x_in(stage7_out),
         .y_out(idct_out),
+        .channel_out(channel_out),
         .valid_out(valid_out)
     );
 
@@ -137,8 +163,10 @@ module loeffler_idct_stage_1 #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH)
     input  logic clk,
     input  logic rst,
     input  logic valid_in,
+    input  logic [1:0] channel_in,
     input  logic signed [INPUT_WIDTH-1:0]  x_in_reversed  [7:0],
     output logic signed [OUTPUT_WIDTH-1:0] y_out          [7:0],
+    output logic [1:0] channel_out,
     output logic valid_out
 );
 
@@ -159,10 +187,12 @@ module loeffler_idct_stage_1 #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH)
     always_ff @(posedge clk) begin
         if(rst) begin
             for(int i = 0; i < 8; i++) y_out[i] <= '0;
-            valid_out <= '0;
+            valid_out   <= '0;
+            channel_out <= '0;
         end
         else begin
-            valid_out <= valid_in;
+            valid_out   <= valid_in;
+            channel_out <= channel_in;
             if(valid_in) begin
 
                 y_out[0] <= x_in[0];
@@ -192,8 +222,10 @@ module loeffler_idct_stage_2 #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH)
     input  logic clk,
     input  logic rst,
     input  logic valid_in,
+    input  logic [1:0] channel_in,
     input  logic signed [INPUT_WIDTH-1:0]  x_in  [7:0],
     output logic signed [OUTPUT_WIDTH-1:0] y_out [8:0],
+    input  logic [1:0] channel_out,
     output logic valid_out
 );
 
@@ -222,10 +254,12 @@ module loeffler_idct_stage_2 #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH)
     always_ff @(posedge clk) begin
         if(rst) begin
             for(int i = 0; i < 9; i++) y_out[i] <= '0;
-            valid_out <= '0;
+            valid_out   <= '0;
+            channel_out <= '0;
         end
         else begin
-            valid_out <= valid_in;
+            valid_out   <= valid_in;
+            channel_out <= channel_in;
             if(valid_in) begin
                 for(int i = 0; i < 9; i++) y_out[i] <= y_out_result[i];
             end
@@ -240,8 +274,10 @@ module loeffler_idct_stage_3 #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH)
     input  logic clk,
     input  logic rst,
     input  logic valid_in,
+    input  logic [1:0] channel_in,
     input  logic signed [INPUT_WIDTH-1:0]  x_in  [8:0],
     output logic signed [OUTPUT_WIDTH-1:0] y_out [8:0],
+    input  logic [1:0] channel_out,
     output logic valid_out
 );
 
@@ -270,10 +306,12 @@ module loeffler_idct_stage_3 #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH)
     always_ff @(posedge clk) begin
         if(rst) begin
             for(int i = 0; i < 9; i++) y_out[i] <= '0;
-            valid_out <= '0;
+            valid_out   <= '0;
+            channel_out <= '0;
         end
         else begin
-            valid_out <= valid_in;
+            valid_out   <= valid_in;
+            channel_out <= channel_in;
             if(valid_in) begin
                 for(int i = 0; i < 9; i++) y_out[i] <= y_out_result[i];
             end
@@ -288,8 +326,10 @@ module loeffler_idct_stage_4 #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH)
     input  logic clk,
     input  logic rst,
     input  logic valid_in,
+    input  logic [1:0] channel_in,
     input  logic signed [INPUT_WIDTH-1:0]  x_in  [8:0],
     output logic signed [OUTPUT_WIDTH-1:0] y_out [8:0],
+    input  logic [1:0] channel_out,
     output logic valid_out
 );
 
@@ -319,10 +359,12 @@ module loeffler_idct_stage_4 #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH)
    always_ff @(posedge clk) begin
         if(rst) begin
             for(int i = 0; i < 9; i++) y_out[i] <= '0;
-            valid_out <= '0;
+            valid_out   <= '0;
+            channel_out <= '0;
         end
         else begin
-            valid_out <= valid_in;
+            valid_out   <= valid_in;
+            channel_out <= channel_in;
             if(valid_in) begin
                 for(int i = 0; i < 9; i++) y_out[i] <= y_out_result[i];
             end
@@ -338,8 +380,10 @@ module loeffler_idct_stage_5 #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH)
     input  logic clk,
     input  logic rst,
     input  logic valid_in,
+    input  logic [1:0] channel_in,
     input  logic signed [INPUT_WIDTH-1:0]  x_in  [8:0],
     output logic signed [OUTPUT_WIDTH-1:0] y_out [9:0],
+    input  logic [1:0] channel_out,
     output logic valid_out
 );
 
@@ -370,10 +414,12 @@ module loeffler_idct_stage_5 #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH)
     always_ff @(posedge clk) begin
         if(rst) begin
             for(int i = 0; i < 10; i++) y_out[i] <= '0;
-            valid_out <= '0;
+            valid_out   <= '0;
+            channel_out <= '0;
         end
         else begin
-            valid_out <= valid_in;
+            valid_out   <= valid_in;
+            channel_out <= channel_in;
             if(valid_in) begin
                 for(int i = 0; i < 10; i++) y_out[i] <= y_out_result[i];
             end
@@ -389,8 +435,10 @@ module loeffler_idct_stage_6 #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH)
     input  logic clk,
     input  logic rst,
     input  logic valid_in,
+    input  logic [1:0] channel_in,
     input  logic signed [INPUT_WIDTH-1:0]  x_in  [9:0],
     output logic signed [OUTPUT_WIDTH-1:0] y_out [9:0],
+    input  logic [1:0] channel_out,
     output logic valid_out
 );
 
@@ -423,10 +471,12 @@ module loeffler_idct_stage_6 #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH)
     always_ff @(posedge clk) begin
         if(rst) begin
             for(int i = 0; i < 10; i++) y_out[i] <= '0;
-            valid_out <= '0;
+            valid_out   <= '0;
+            channel_out <= '0;
         end
         else begin
-            valid_out <= valid_in;
+            valid_out   <= valid_in;
+            channel_out <= channel_in;
             if(valid_in) begin
                 for(int i = 0; i < 10; i++) y_out[i] <= y_out_result[i];
             end
@@ -441,8 +491,10 @@ module loeffler_idct_stage_7 #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH)
     input  logic clk,
     input  logic rst,
     input  logic valid_in,
+    input  logic [1:0] channel_in,
     input  logic signed [INPUT_WIDTH-1:0]  x_in  [9:0],
     output logic signed [OUTPUT_WIDTH-1:0] y_out [7:0],
+    input  logic [1:0] channel_out,
     output logic valid_out
 );
 
@@ -465,10 +517,12 @@ module loeffler_idct_stage_7 #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH)
     always_ff @(posedge clk) begin
         if(rst) begin
             for(int i = 0; i < 8; i++) y_out[i] <= '0;
-            valid_out <= '0;
+            valid_out   <= '0;
+            channel_out <= '0;
         end
         else begin
-            valid_out <= valid_in;
+            valid_out   <= valid_in;
+            channel_out <= channel_in;
             if(valid_in) begin
                 for(int i = 0; i < 8; i++) y_out[i] <= y_out_result[i];
             end
@@ -483,8 +537,10 @@ module loeffler_idct_stage_8 #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH)
     input  logic clk,
     input  logic rst,
     input  logic valid_in,
+    input  logic [1:0] channel_in,
     input  logic signed [INPUT_WIDTH-1:0]  x_in  [7:0],
     output logic signed [OUTPUT_WIDTH-1:0] y_out [7:0],
+    input  logic [1:0] channel_out,
     output logic valid_out
 );
 
@@ -507,10 +563,12 @@ module loeffler_idct_stage_8 #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH)
     always_ff @(posedge clk) begin
         if(rst) begin
             for(int i = 0; i < 8; i++) y_out[i] <= '0;
-            valid_out <= '0;
+            valid_out   <= '0;
+            channel_out <= '0;
         end
         else begin
-            valid_out <= valid_in;
+            valid_out   <= valid_in;
+            channel_out <= channel_in;
             if(valid_in) begin
                 for(int i = 0; i < 8; i++) y_out[i] <= y_out_result[i];
             end
