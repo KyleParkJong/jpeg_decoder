@@ -1,8 +1,8 @@
 VCS = vcs -kdb -sverilog -debug_access+all+reverse
 
-TB = top_tb.sv
+TB = supersample_buffer_tb.sv
 TB_LIBS = displays.sv
-RTL = unzigzag.sv huffman_decoder.sv vli_decoder.sv input_buffer.sv block_buffer.sv entropy_decoding.sv diff_decoder.sv deQuant.sv top.sv supersample_4x4.sv supersample_8x8.sv supersample_top.sv
+RTL = unzigzag.sv huffman_decoder.sv vli_decoder.sv input_buffer.sv block_buffer.sv entropy_decoding.sv diff_decoder.sv deQuant.sv top.sv supersample_4x4.sv supersample_8x8.sv supersample_top.sv supersample_buffer_top.sv channel_buffer_copy.sv
 DEFS = sys_defs.svh
 
 .DEFAULT_GOAL = sim
