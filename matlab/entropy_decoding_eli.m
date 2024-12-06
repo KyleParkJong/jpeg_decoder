@@ -138,7 +138,7 @@ blocksIDCT = zeros(8,1.5*blocksTall*blocksWide*8);
 for i = 1:8:length(blocksDQ)
     blocksIDCT(1:8,i:i+7) = idct2(blocksDQ(1:8,i:i+7));
 end
-blocksShifted = blocksIDCT+127;
+blocksShifted = blocksIDCT+128;
 
 if intermediatePlots == 1
     figure;

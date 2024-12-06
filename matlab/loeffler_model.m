@@ -6,19 +6,27 @@ clear;
 test_data = [50 60 70 80 90 100 110 120];
 
 idct_2d_test_data = [
-                    11 12 13 14 15 16 17 18;
-                    21 22 23 24 25 26 27 28;
-                    31 32 33 34 35 36 37 38;
-                    41 42 43 44 45 46 47 48;
-                    51 52 53 54 55 56 57 58;
-                    61 62 63 64 65 66 67 68;
-                    71 72 73 74 75 76 77 78;
-                    81 82 83 84 85 86 87 88;
+                    24 -8 84 96 -20 -16 0 0;
+                    -30	55 -42 16 -10 0 0 0;
+                    150	40	-54	-100	32	0	28	22;
+                    24	-42	72	-60	20	0	0	0;
+                    -7	-18	45	0	-27	0	0	0;
+                    0	14	0	-26	-32	0	0	0;
+                    0	26	-31	0	0	0	0	0;
+                    0	0	0	0	0	0	0	0
                     ];
 
+
+idct_2d_test_dataPos = abs(idct_2d_test_data);
+
 % Write file to be used with 2D IDCT Testbench
-fileID = fopen('idct_input_block.mem','w');
-fprintf(fileID,'%02x %02x %02x %02x %02x %02x %02x %02x\n', idct_2d_test_data.');
+fileID = fopen('idct_input_block3.mem','w');
+for row = 1:8
+    for col = 1:8
+        fprintf(fileID,'%s ', dec2hex(idct_2d_test_dataPos(row,col),2)); %dec2hex(idct_2d_test_data(row,col),2)
+    end
+    fprintf(fileID,'\n');
+end
 fclose(fileID);
 
 % Matlab
@@ -29,8 +37,9 @@ matlab_idct = idct(test_data);
 %improved_loeffler_dct = loefflersDCT(test_data)/sqrt(8);
 %improved_loeffler_idct = loefflersIDCT(test_data)/sqrt(8);
 
-idct2d_test_result = loefflersIDCT_2D(idct_2d_test_data); 
-idct2d_test_result_fixed = fix(loefflersIDCT_2D_fixed(idct_2d_test_data));
+idct2d_test_result = loefflersIDCT_2D(idct_2d_test_dataPos); 
+idct2d_test_result_fixed = fix(loefflersIDCT_2D_fixed(idct_2d_test_dataPos));
+idct2d_matlab = idct2(idct_2d_test_dataPos);
 
 %% Loeffler's Original DCT (Works correctly)
 function dct_out = loefflerDCT(dct_in)
@@ -723,7 +732,7 @@ function idct_out = loefflersIDCT_2D_fixed(idct_in)
     row_idct = zeros(8,8);
     idct_out = zeros(8,8);
 
-    % DCT of the row
+    % IDCT of the row
     for row=1:size(idct_in,1)
         row_idct(row,:) = loefflersIDCT_fixed(idct_in(row,:));
     end
