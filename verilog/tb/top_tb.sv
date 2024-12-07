@@ -12,8 +12,18 @@ module top_tb;
     logic unsigned [7:0] b [7:0][7:0];
     logic valid_out_Color;
 
-    //Set which image to load
-    string imgname = "smallCat";
+    /* Automatically load image name */
+    string imgname;
+    integer imgNameF, line_l;
+    initial begin
+        imgNameF = $fopen("../python/imageName.txt", "r");
+        line_l = $fscanf(imgNameF, "%s\n",imgname);
+        $display({"Running top_tb on: ",imgname});
+    end
+     /* Or set image name manually */
+    //string imgname = "smallCat";
+
+    ////////////////////////////////////////////////////////////////////////////
 
     //Instantiate Top module
     top dut (
@@ -33,8 +43,8 @@ module top_tb;
 
     import displays::*;
 
-    integer finput, line_len, index;
-    integer row;
+    integer finput, line_len;
+    integer row, index;
     integer blocksProccessed = 0;
     integer R_chan, G_chan, B_chan;
     real height, width; 
@@ -48,8 +58,8 @@ module top_tb;
         line_len = $fscanf(finput, "%d,%d\n",height,width);
         blocksWide = $ceil(width/16.0)*2;
         blocksTall = $ceil(height/16.0)*2;
-        $display(blocksWide);
-        $display(blocksTall);
+        // $display(blocksWide);
+        // $display(blocksTall);
 
         //Load quantization tables into quant packet
         qp.map[0] = 0;
@@ -87,7 +97,7 @@ module top_tb;
         line_len = -1;
         hp.tabs[0].dc_tab = 0;
         index = 0;
-        $fscanf(finput, "%d\n", hp.tabs[0].dc_size);
+        line_len = $fscanf(finput, "%d\n", hp.tabs[0].dc_size);
         while(!$feof(finput)) begin
            line_len = $fscanf(finput, "%b %d %d\n", hp.tabs[0].dc_tab[index].code,
                     hp.tabs[0].dc_tab[index].symbol, hp.tabs[0].dc_tab[index].size);
@@ -98,7 +108,7 @@ module top_tb;
         line_len = -1;
         hp.tabs[1].dc_tab = 0;
         index = 0;
-        $fscanf(finput, "%d\n", hp.tabs[1].dc_size);
+        line_len = $fscanf(finput, "%d\n", hp.tabs[1].dc_size);
         while(!$feof(finput)) begin
            line_len = $fscanf(finput, "%b %d %d\n", hp.tabs[1].dc_tab[index].code,
                     hp.tabs[1].dc_tab[index].symbol, hp.tabs[1].dc_tab[index].size);
@@ -109,7 +119,7 @@ module top_tb;
         line_len = -1;
         hp.tabs[0].ac_tab = 0;
         index = 0;
-        $fscanf(finput, "%d\n",hp.tabs[0].ac_size);
+        line_len = $fscanf(finput, "%d\n",hp.tabs[0].ac_size);
         while(!$feof(finput)) begin
            line_len = $fscanf(finput, "%b %d %d\n", hp.tabs[0].ac_tab[index].code,
                     hp.tabs[0].ac_tab[index].symbol, hp.tabs[0].ac_tab[index].size);
@@ -120,7 +130,7 @@ module top_tb;
         line_len = -1;
         hp.tabs[1].ac_tab = 0;
         index = 0;
-        $fscanf(finput, "%d\n",hp.tabs[1].ac_size);
+        line_len = $fscanf(finput, "%d\n",hp.tabs[1].ac_size);
         while(!$feof(finput)) begin
            line_len = $fscanf(finput, "%b %d %d\n", hp.tabs[1].ac_tab[index].code,
                     hp.tabs[1].ac_tab[index].symbol, hp.tabs[1].ac_tab[index].size);
