@@ -1,7 +1,0 @@
-Command Line: /usr/caen/verdi-2023.12-SP2-1/platform/LINUXAMD64/bin/Novas huffman_decoder.sv
-uname(Linux eecs2420p16.engin.umich.edu 4.18.0-553.22.1.el8_10.x86_64 #1 SMP Wed Sep 11 18:02:00 EDT 2024 x86_64)
-- System Information -
-Version: Verdi_V-2023.12-SP2-1, -- Mon Jul 15 02:51:00 PDT 2024
-System: Linux eecs2420p16.engin.umich.edu 4.18.0-553.22.1.el8_10.x86_64 #1 SMP Wed Sep 11 18:02:00 EDT 2024 x86_64
-Total memory used: 870567936
-Run time: Tue Nov 19 00:48:00 2024

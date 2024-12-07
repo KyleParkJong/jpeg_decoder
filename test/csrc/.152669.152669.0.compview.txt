@@ -1,9 +1,0 @@
-{"vcs1":{"timestamp_begin":1731995128.194847880, "rt":5.21, "ut":0.83, "st":0.45}}
-{"vcselab":{"timestamp_begin":1731995133.472150024, "rt":1.05, "ut":0.15, "st":0.08}}
-{"link":{"timestamp_begin":1731995134.586679497, "rt":1.01, "ut":0.10, "st":0.10}}
-{"SNPS_VCS_INTERNAL_ROOT_START_TIME": 1731995127.938850800}
-{"VCS_COMP_START_TIME": 1731995127.938850800}
-{"VCS_COMP_END_TIME": 1731995254.467012638}
-{"VCS_USER_OPTIONS": "-kdb -sverilog -debug_access+all+reverse +define+SYNTH huffman_decoder.vg /afs/umich.edu/class/eecs470/lib/verilog/lec25dscc25.v -R -gui"}
-{"vcs1": {"peak_mem": 557772}}
-{"vcselab": {"peak_mem": 277240}}
