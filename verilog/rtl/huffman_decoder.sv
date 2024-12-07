@@ -13,7 +13,7 @@ module huffman_decoder(
 );
 
 logic signed [$clog2(`H)+1:0] index;
-logic [`H-1:0][15:0] mask;
+logic [`H:0][16:0] mask;
 
 always_comb begin
     index = -1;

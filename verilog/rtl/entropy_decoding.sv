@@ -109,6 +109,7 @@ always_comb begin
     //ch_cnt_n = (ch_cnt + (valid_out && start)) % 6; // assume ch1 (4x) ch2 ch3 order
     ch_cnt_n = (ch_cnt + clear_n) % 6; // assume ch1 (4x) ch2 ch3 order
     if (!start) start_n = ibuff_valid;
+    else start_n = start;
 end
 
 always_ff @(posedge clk) begin
