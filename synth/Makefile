@@ -46,18 +46,7 @@ export MK_MEM_SUFFIX = typ_1d05_25
 all: syn
 
 syn: 
-	-mkdir -p logs
 	dc_shell -f scripts/synth.tcl | tee logs/synth.log
-	-mkdir -p temp_files
-	-mv alib-52 temp_files/
-	-mv *_dclib temp_files/
-	-mv command.log temp_files/
-	-mv default.svf temp_files/
-	-mkdir -p export
-	-cp -f memory/db/*_${MK_MEM_SUFFIX}_ccs.db export/ 2>>/dev/null
-
-memgen:
-	cd memory; ./memgen.sh
 
 clean:
 	-rm -rvf temp_files

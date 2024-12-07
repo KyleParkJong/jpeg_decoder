@@ -126,7 +126,7 @@ ungroup -all -flatten
 # append compile_ultra_options " -no_autoungroup"
 # puts "Information: Starting compile_ultra with the following flags: $compile_ultra_options"
 # compile_ultra $compile_ultra_options
-#compile_ultra
+compile_ultra
 optimize_netlist -area
 
 #################################################################################
