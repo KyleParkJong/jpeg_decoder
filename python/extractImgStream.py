@@ -6,6 +6,7 @@ import sys
 
 ######## USER - ENTER I/O FILE NAMES ###########
 imageName = sys.argv[1]
+imageName = imageName.split(".")[0]
 imgName = "../images/"+imageName+".jpg" #"charcoal_cat.jpg"#
 outFolder = imageName #"colorBarsSmall"
 ######## USER - CONFIGURE PARAMETERS ###########
@@ -197,17 +198,18 @@ while(True):
         elif (marker == 0xDB):
             print("Quantization Table (Zig-zag order)")
             (sp,length) = readWord(fileBytes, sp)
-            destination = "empty"
-            for i in range(length-2):
-                (sp,b)=readByte(fileBytes, sp)
-                if(destination == "empty"):
-                    destination = b
-                    while(len(quantTables) < destination+1):
-                        quantTables.append([])
-                else:
+            lengthleft = length - 2 
+            while(lengthleft>0):
+                (sp,destination) = readByte(fileBytes, sp)
+                lengthleft -= 1
+                while(len(quantTables) < destination+1):
+                    quantTables.append([])
+                for i in range(64):
+                    (sp,b) = readByte(fileBytes, sp)
+                    lengthleft -= 1
                     quantTables[destination].append(b)
-            print("  Destination: "+str(destination))
-            printMatrix8(quantTables[destination])
+                print("  Destination: "+str(destination))
+                printMatrix8(quantTables[destination])
         elif (marker == 0xC0):
             print("Start of Frame - Baseline DCT-Based JPEG")
             (sp,length) = readWord(fileBytes, sp)
@@ -342,4 +344,9 @@ of = open(fileName, "w")
 of.write(str(imgDimensions[0])+","+str(imgDimensions[1])+"\n")
 print("Recovered Header Info output to file: "+fileName)
 of.close()
-
+#Write file name for later stpes to use
+fileName = "imageName.txt"
+of = open(fileName, "w")
+of.write(imageName+"\n")
+print("Cached image name "+imageName+" to file: "+fileName)
+of.close()
